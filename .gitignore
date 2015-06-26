@@ -1,0 +1,7 @@
+onut/
+Debug/
+Release/
+*.opensdf
+*.sdf
+*.suo
+*.user

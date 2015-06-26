@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>EASY_GRAPHIX;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../onut/include;../../onut/EasyGraphix/eg/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../onut/include;../../onut/EasyGraphix/eg/include;../../src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -68,7 +68,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>EASY_GRAPHIX;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../onut/include;../../onut/EasyGraphix/eg/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../onut/include;../../onut/EasyGraphix/eg/include;../../src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -78,15 +78,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\onut\EasyGraphix\eg\src\dx11\egdx11.vcxproj">
       <Project>{0aa82497-cc19-4c6a-99bc-f0027c2f7cca}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\onut\project\win\onut.vcxproj">
       <Project>{5a0e49d2-55f1-4ab5-94f6-d19f308ecc46}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

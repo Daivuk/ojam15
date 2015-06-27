@@ -140,7 +140,7 @@ void Game::update()
 
 void Game::render()
 {
-    Vector2 cameraOffset{-camera.x + (float)OSettings->getResolution().x * .5f, -camera.y + (float)OSettings->getResolution().y *.5f};
+    Vector2 cameraOffset{-camera.x + OScreenWf * .5f, -camera.y + OScreenHf *.5f};
     cameraOffset.x = std::roundf(cameraOffset.x / 2) * 2;
     cameraOffset.y = std::roundf(cameraOffset.y / 2) * 2;
 
@@ -156,7 +156,9 @@ void Game::render()
     OSB->drawRect(nullptr, {0, 0, (float)OSettings->getResolution().x / UNIT_SCALE, (float)OSettings->getResolution().y / UNIT_SCALE}, Color::Black);
     OSB->end();
     egModelPush();
+    egModelTranslate(-camera.x, -camera.y, 0);
     egModelScale(1.f / UNIT_SCALE, 1.f / UNIT_SCALE, 1.f);
+    egModelTranslate(OScreenWf * .5f / UNIT_SCALE, OScreenHf *.5f / UNIT_SCALE, 0);
     OPB->begin(onut::ePrimitiveType::LINES);
     for (auto pBullet = pBullets->Head(); pBullet; pBullet = pBullets->Next(pBullet))
     {
@@ -200,6 +202,7 @@ void Game::render()
         pUnit->render();
     }
     OSB->end();
+    egModelPop();
 
     // Draw bullets overlay
     egStatePush();
@@ -208,8 +211,6 @@ void Game::render()
     OSB->drawRect(pBulletTexture, {0, 0, (float)OSettings->getResolution().x, (float)OSettings->getResolution().y});
     OSB->end();
     egStatePop();
-
-    egModelPop();
 }
 
 void Game::forEachInRadius(Unit *pMyUnit, float fRadius, const std::function<void(Unit*, float)>& callback)

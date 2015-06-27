@@ -37,6 +37,7 @@ void Soldier::update()
 
 void Soldier::updateAttack()
 {
+    if (bLocked) return;
     if (fShootTime <= 0.f)
     {
         Unit *pTargetFound = nullptr;
@@ -69,13 +70,24 @@ void Soldier::updateAttack()
     else
     {
         fShootTime -= ODT;
-        if (fShootDelay > 0.f)
+        if (pMortar)
         {
-            fShootDelay -= ODT;
-            if (fShootDelay <= 0.f)
+            if (fShootDelay > 0.f)
             {
-                // Shoot
-                onShoot(savedAttackPos);
+                fShootDelay = 0.f;
+                pMortar->onShoot(savedAttackPos);
+            }
+        }
+        else
+        {
+            if (fShootDelay > 0.f)
+            {
+                fShootDelay -= ODT;
+                if (fShootDelay <= 0.f)
+                {
+                    // Shoot
+                    onShoot(savedAttackPos);
+                }
             }
         }
     }
@@ -124,6 +136,11 @@ void Soldier::updateSteering()
         {
             g_pGame->forEachInRadius(this, STEERING_SIZE, [this](Unit* pUnit, float dis)
             {
+                if (pMortar)
+                {
+                    if (pMortar->pCrew2 == pUnit) return;
+                }
+
                 Vector2 dirWithOther = position - pUnit->position;
                 dirWithOther /= dis;
 
@@ -163,12 +180,41 @@ void Soldier::updateMovement()
     {
         fWalkAnim += ODT;
     }
+
+    // If we control a mortar, make sure it's always following us
+    if (pMortar)
+    {
+        if (lastMoveDir.LengthSquared() > 0.f)
+        {
+            Vector2 right{-lastMoveDir.y, lastMoveDir.x};
+            pMortar->position = position + lastMoveDir * 16.f - right * 16.f;
+
+            // If we have a crew member, make sure he also follows the mortar
+            if (pMortar->pCrew2)
+            {
+                pMortar->pCrew2->bFollowAlert = true;
+                pMortar->pCrew2->followTargetPos = position + - right * 32.f;
+            }
+        }
+    }
 }
 
 void Soldier::updateDirection()
 {
     if (fShootTime <= 0.f || fWalkAnim >= SHOOT_AND_WALK_TIMEOUT)
     {
+        if (pMortar)
+        {
+            if (moveDir.LengthSquared() > 0)
+            {
+                auto angle = DirectX::XMConvertToDegrees(atan2f(moveDir.y, moveDir.x));
+                while (angle < 0.f) angle += 360.f;
+                angle /= 360.f;
+                angle *= 8.f;
+                angle += .5f;
+                pMortar->direction = (int)angle + 2;
+            }
+        }
         switch (direction)
         {
             case DIRECTION_UP:

@@ -1,6 +1,7 @@
 #pragma once
 #include "Unit.h"
 #include "onut.h"
+#include "Mortar.h"
 
 #define SOLDIER_STATE_STANDING 0
 #define SOLDIER_STATE_CROUCHING 1
@@ -64,4 +65,6 @@ public:
     Vector2 savedAttackPos;
     int textureOffset = 0;
     bool bFollowAlert = false;
+    Mortar *pMortar = nullptr;
+    bool bLocked = false;
 };

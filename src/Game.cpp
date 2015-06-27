@@ -5,6 +5,8 @@
 #include "Puff.h"
 #include "Blood.h"
 #include "Scout.h"
+#include "Mortar.h"
+#include "Smoke.h"
 
 Game *g_pGame;
 
@@ -20,6 +22,8 @@ Game::Game()
     biggest = std::max<>(biggest, sizeof(Puff));
     biggest = std::max<>(biggest, sizeof(Blood));
     biggest = std::max<>(biggest, sizeof(Scout));
+    biggest = std::max<>(biggest, sizeof(Mortar));
+    biggest = std::max<>(biggest, sizeof(Smoke));
     pUnitPool = new OPool(biggest, MAX_UNITS);
 
     // Create unit list
@@ -45,18 +49,43 @@ Game::Game()
         }
         else if (pMapObj->type == "BlueSoldier")
         {
-            if (onut::randb())
-            {
-                spawn<Rifleman>(pos, TEAM_BLUE);
-            }
-            else
-            {
-                spawn<Scout>(pos, TEAM_BLUE);
-            }
+            spawn<Rifleman>(pos, TEAM_BLUE);
         }
         else if (pMapObj->type == "RedSoldier")
         {
             spawn<Rifleman>(pos, TEAM_RED);
+        }
+        else if (pMapObj->type == "BlueScout")
+        {
+            spawn<Scout>(pos, TEAM_BLUE);
+        }
+        else if (pMapObj->type == "RedScout")
+        {
+            spawn<Scout>(pos, TEAM_RED);
+        }
+        else if (pMapObj->type == "BlueMortar")
+        {
+            Rifleman *crew[2] = {
+                spawn<Rifleman>(pos + Vector2(-8.f, -8.f), TEAM_BLUE),
+                spawn<Rifleman>(pos + Vector2(8.f, -8.f), TEAM_BLUE)
+            };
+            crew[0]->pMortar = spawn<Mortar>(pos, TEAM_BLUE);
+            crew[1]->bLocked = true;
+            crew[0]->pMortar->pCrew1 = crew[0];
+            crew[0]->pMortar->pCrew2 = crew[1];
+            crew[0]->pMortar->pCrew1->fAttackRange = 700.f;
+        }
+        else if (pMapObj->type == "RedMortar")
+        {
+            Rifleman *crew[2] = {
+                spawn<Rifleman>(pos + Vector2(-8.f, -8.f), TEAM_RED),
+                spawn<Rifleman>(pos + Vector2(8.f, -8.f), TEAM_RED)
+            };
+            crew[0]->pMortar = spawn<Mortar>(pos, TEAM_RED);
+            crew[1]->bLocked = true;
+            crew[0]->pMortar->pCrew1 = crew[0];
+            crew[0]->pMortar->pCrew2 = crew[1];
+            crew[0]->pMortar->pCrew1->fAttackRange = 700.f;
         }
     }
 }
@@ -283,9 +312,9 @@ void Game::forEachInRadius(const Vector2 &position, float fRadius, const std::fu
     }
 }
 
-void Game::spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team, float damage)
+void Game::spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team, float damage, bool isShell)
 {
-    auto pBullet = pBulletPool->alloc<Bullet>(from, to, precision, in_team, damage);
+    auto pBullet = pBulletPool->alloc<Bullet>(from, to, precision, in_team, damage, isShell);
     if (!pBullet) return;
     pBullets->InsertTail(pBullet);
 }

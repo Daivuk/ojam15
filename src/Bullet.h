@@ -8,7 +8,7 @@
 class Bullet
 {
 public:
-    Bullet(const Vector2& from, const Vector2& to, float precision, int in_team, float dmg);
+    Bullet(const Vector2& from, const Vector2& to, float precision, int in_team, float dmg, bool in_isShell);
 
     bool update(); // Returns true when needs to be killed
     void render();
@@ -20,7 +20,10 @@ public:
     Vector3 velocity;
     Vector3 trail[3];
     Vector3 from;
+    Vector3 to;
     int team;
     bool bMarkedForDeletion = false;
     float damage = 1.f;
+    bool isShell = false;
+    float shellProgress = 0.f;
 };

@@ -40,6 +40,7 @@ void Hero::update()
         {
             auto pSoldier = dynamic_cast<Soldier*>(pUnit);
             if (!pSoldier) return;
+            if (pSoldier->bLocked) return;
             if (pSoldier->team != team) return;
             if (pSoldier->pFollow == this) return;
 
@@ -62,6 +63,7 @@ void Hero::update()
         {
             auto pSoldier = dynamic_cast<Soldier*>(pUnit);
             if (!pSoldier) return;
+            if (pSoldier->bLocked) return;
             if (pSoldier->team != team) return;
             if (pSoldier->pFollow != this) return;
 
@@ -116,17 +118,42 @@ void Hero::update()
     };
     static const auto followPosCount = sizeof(followPositions) / sizeof(Vector2);
 
+    static const Vector2 mortarFollowPos[] =
+    {
+        {-SEPARATION * 1.0f, -SEPARATION * .7f - OFFSET_FROM_HERO},
+        {SEPARATION * 1.0f, -SEPARATION * .7f - OFFSET_FROM_HERO},
+        {-SEPARATION * 3.0f, -SEPARATION * .4f - OFFSET_FROM_HERO},
+        {SEPARATION * 3.0f, -SEPARATION * .4f - OFFSET_FROM_HERO},
+    };
+    static const auto followMortarPosCount = sizeof(mortarFollowPos) / sizeof(Vector2);
+
     unsigned int i = 0;
+    unsigned int j = 0;
     for (auto pFollower = pFollowers->Head(); pFollower; pFollower = pFollowers->Next(pFollower))
     {
-        if (i < followPosCount)
+        if (pFollower->pMortar)
         {
-            pFollower->followTargetPos = position + dir * followPositions[i].y + right * followPositions[i].x;
-            ++i;
+            if (j < followMortarPosCount)
+            {
+                pFollower->followTargetPos = position + dir * mortarFollowPos[j].y + right * mortarFollowPos[j].x;
+                ++j;
+            }
+            else
+            {
+                pFollower->followTargetPos = position - dir * OFFSET_FROM_HERO;
+            }
         }
         else
         {
-            pFollower->followTargetPos = position - dir * OFFSET_FROM_HERO;
+            if (i < followPosCount)
+            {
+                pFollower->followTargetPos = position + dir * followPositions[i].y + right * followPositions[i].x;
+                ++i;
+            }
+            else
+            {
+                pFollower->followTargetPos = position - dir * OFFSET_FROM_HERO;
+            }
         }
     }
 }
@@ -147,6 +174,7 @@ void Hero::renderSelection()
     {
         auto pSoldier = dynamic_cast<Soldier*>(pUnit);
         if (!pSoldier) return;
+        if (pSoldier->bLocked) return;
         if (pSoldier->team != team) return;
         if (pSoldier->pFollow != this)
         {

@@ -20,6 +20,6 @@ void Scout::render()
 
 void Scout::onShoot(const Vector2& attackPos)
 {
-    g_pGame->spawnBullet(position, attackPos, fPrecision, team, 1.0f);
+    g_pGame->spawnBullet(position, attackPos, fPrecision, team, 1.0f, false);
     g_pGame->playSound(OGetSound("rifle.wav"), position, .75f);
 }

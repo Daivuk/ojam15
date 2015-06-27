@@ -70,7 +70,7 @@ public:
         return pUnit;
     }
 
-    void spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team, float damage);
+    void spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team, float damage, bool isShell);
 
     Chunk *getChunkAt(const Vector2 &pos)
     {

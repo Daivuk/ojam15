@@ -5,6 +5,7 @@
 #define STEERING_SIZE 32
 #define STEERSPEED 64
 #define FOLLOW_DISTANCE 16
+#define SHOOT_AND_WALK_TIMEOUT (6.f / SHOOT_ANIM_SPEED)
 
 Soldier::Soldier()
 {
@@ -82,7 +83,7 @@ void Soldier::updateAttack()
 
 void Soldier::updateSteering()
 {
-    if (fShootTime <= 0.f)
+    if (fShootTime <= 0.f || fWalkAnim >= SHOOT_AND_WALK_TIMEOUT)
     {
         // Follow
         if (pFollow)
@@ -121,7 +122,7 @@ void Soldier::updateSteering()
 
 void Soldier::updateMovement()
 {
-    if (fShootTime <= 0.f)
+    if (fShootTime <= 0.f || fWalkAnim >= SHOOT_AND_WALK_TIMEOUT)
     {
         position += moveDir * velocity * ODT;
 
@@ -147,7 +148,7 @@ void Soldier::updateMovement()
 
 void Soldier::updateDirection()
 {
-    if (fShootTime <= 0.f)
+    if (fShootTime <= 0.f || fWalkAnim >= SHOOT_AND_WALK_TIMEOUT)
     {
         switch (direction)
         {
@@ -290,7 +291,7 @@ void Soldier::render()
     }
     else
     {
-        if (fShootTime > 0.f)
+        if (fShootTime > 0.f && state == SOLDIER_STATE_SHOOTING_STANDING)
         {
             frame = (int)(fWalkAnim * SHOOT_ANIM_SPEED);
             frame = std::min<>(frame, 3);
@@ -342,13 +343,13 @@ void Soldier::onStartAttack(const Vector2& attackPos)
 
 void Soldier::renderSelection()
 {
-    if (g_pGame->pMyHero)
-    {
-        if (pFollow && team == g_pGame->pMyHero->team)
-        {
-            OSB->drawSprite(OGetTexture("selectedSmall.png"), getSnapPos(), {TEAM_COLOR[team].x, TEAM_COLOR[team].y, TEAM_COLOR[team].z, .5f}, 0, 1);
-        }
-    }
+    //if (g_pGame->pMyHero)
+    //{
+    //    if (pFollow && team == g_pGame->pMyHero->team)
+    //    {
+    //        OSB->drawSprite(OGetTexture("selectedSmall.png"), getSnapPos(), {TEAM_COLOR[team].x, TEAM_COLOR[team].y, TEAM_COLOR[team].z, .5f}, 0, 1);
+    //    }
+    //}
 }
 
 void Soldier::doDamage(float dmg)

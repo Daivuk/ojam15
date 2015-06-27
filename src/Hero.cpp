@@ -152,9 +152,9 @@ void Hero::renderSelection()
         {
             OSB->drawSprite(OGetTexture("selectedSmall.png"), pSoldier->getSnapPos(), {0, 1, 0, .75f}, 0, 1);
         }
-        else
-        {
-            OSB->drawSprite(OGetTexture("selectedSmall.png"), pSoldier->getSnapPos(), {1, 0, 0, .75f}, 0, 1);
-        }
+        //else
+        //{
+        //    OSB->drawSprite(OGetTexture("selectedSmall.png"), pSoldier->getSnapPos(), {1, 0, 0, .75f}, 0, 1);
+        //}
     });
 }

@@ -5,10 +5,12 @@
 #define SOLDIER_STATE_STANDING 0
 #define SOLDIER_STATE_CROUCHING 1
 #define SOLDIER_STATE_SHOOTING_STANDING 2
-#define SOLDIER_STATE_PRONING 3
+#define SOLDIER_STATE_DYING 3
+#define SOLDIER_STATE_PRONING 4
 
 #define WALK_ANIM_SPEED 6
 #define SHOOT_ANIM_SPEED 18
+#define DIE_ANIM_SPEED 6
 
 #define SOLDIER_SPEED 96
 
@@ -42,7 +44,9 @@ public:
     OTexture *pTexture;
     OTexture *pTextureColor;
     float fWalkAnim = 0.f;
+    float fDieAnim = 0.f;
     int direction;
+    int dieInDirection;
     Vector2 moveDir;
     float velocity = 0.f;
     float fIdleTime = 0.f;

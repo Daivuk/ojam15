@@ -20,11 +20,18 @@ void Soldier::update()
 {
     Unit::update();
 
-    updateSteering();
-    updateIdleState();
-    updateDirection();
-    updateMovement();
-    updateAttack();
+    if (state != SOLDIER_STATE_DYING)
+    {
+        updateSteering();
+        updateIdleState();
+        updateDirection();
+        updateMovement();
+        updateAttack();
+    }
+    else
+    {
+        fDieAnim += ODT;
+    }
 }
 
 void Soldier::updateAttack()
@@ -251,25 +258,57 @@ void Soldier::render()
     auto snappedPos = getSnapPos();
     Rect rect{snappedPos.x - 4 * UNIT_SCALE, snappedPos.y - 6 * UNIT_SCALE, 8 * UNIT_SCALE, 8 * UNIT_SCALE};
     auto frame = 0;
-    if (fShootTime > 0.f)
+    auto dir = direction;
+    auto aState = state;
+    if (state == SOLDIER_STATE_DYING)
     {
-        frame = (int)(fWalkAnim * SHOOT_ANIM_SPEED);
-        frame = std::min<>(frame, 3);
+        if (fDieAnim >= 0)
+        {
+            if (direction != dieInDirection) direction = dieInDirection;
+            frame = (int)(fDieAnim * DIE_ANIM_SPEED);
+            frame = std::min<>(frame, 3);
+        }
+        else
+        {
+            frame = (int)(-fDieAnim * DIE_ANIM_SPEED);
+            frame = std::min<>(frame, 1);
+            aState = SOLDIER_STATE_STANDING;
+            if (frame == 0)
+            {
+                dir = (dir + 2) % 4;
+            }
+            else if (frame == 1)
+            {
+                dir = (dir + 1) % 4;
+                frame = 0;
+            }
+        }
     }
     else
     {
-        frame = (int)(fWalkAnim * WALK_ANIM_SPEED) % 4;
+        if (fShootTime > 0.f)
+        {
+            frame = (int)(fWalkAnim * SHOOT_ANIM_SPEED);
+            frame = std::min<>(frame, 3);
+        }
+        else
+        {
+            frame = (int)(fWalkAnim * WALK_ANIM_SPEED) % 4;
+        }
     }
 
     Vector4 UVs{
-        (float)(state * 4 + frame) * 8 / pTexture->getSizef().x,
-        (float)direction * 8 / pTexture->getSizef().y,
-        (float)(state * 4 + frame + 1) * 8 / pTexture->getSizef().x,
-        (float)(direction + 1) * 8 / pTexture->getSizef().y
+        (float)(aState * 4 + frame) * 8 / pTexture->getSizef().x,
+        (float)dir * 8 / pTexture->getSizef().y,
+        (float)(aState * 4 + frame + 1) * 8 / pTexture->getSizef().x,
+        (float)(dir + 1) * 8 / pTexture->getSizef().y
     };
 
     OSB->drawRectWithUVs(pTexture, rect, UVs);
-    OSB->drawRectWithUVs(pTextureColor, rect, UVs, TEAM_COLOR[team]);
+    if (state != SOLDIER_STATE_DYING)
+    {
+        OSB->drawRectWithUVs(pTextureColor, rect, UVs, TEAM_COLOR[team]);
+    }
 }
 
 void Soldier::onStartAttack(const Vector2& attackPos)
@@ -314,7 +353,23 @@ void Soldier::doDamage(float dmg)
     life -= dmg;
     if (life <= 0.f)
     {
+        team = TEAM_NEUTRAL;
         life = 0.f;
-        bMarkedForDeletion = true;
+        fShootTime = 0.f;
+        bChunkIt = false;
+        // A small change to spin first
+        if (direction == DIRECTION_LEFT) dieInDirection = DIRECTION_UP;
+        if (direction == DIRECTION_RIGHT) dieInDirection = DIRECTION_DOWN;
+        if (onut::randf(10) <= 3.f)
+        {
+            fDieAnim = -2.f / DIE_ANIM_SPEED;
+        }
+
+        static char szSnd[] = "soldier_die1.wav";
+        szSnd[strlen(szSnd) - 5] = '0' + onut::randi(1, 2);
+        g_pGame->playSound(OGetSound(szSnd), position);
+
+        state = SOLDIER_STATE_DYING;
+        linkChunk.Unlink();
     }
 }

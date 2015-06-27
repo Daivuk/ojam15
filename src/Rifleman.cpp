@@ -3,8 +3,8 @@
 
 Rifleman::Rifleman()
 {
-    fAttackRange = 300.f;
-    fPrecision = 30.f;
+    fAttackRange = 500.f;
+    fPrecision = 5.f;
 }
 
 void Rifleman::update()
@@ -19,5 +19,6 @@ void Rifleman::render()
 
 void Rifleman::onShoot(const Vector2& attackPos)
 {
-    g_pGame->spawnBullet(position, attackPos, fPrecision, team);
+    g_pGame->spawnBullet(position, attackPos, fPrecision, team, .75f);
+    g_pGame->playSound(OGetSound("rifle.wav"), position, .75f);
 }

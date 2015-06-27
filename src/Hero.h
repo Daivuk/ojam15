@@ -1,8 +1,6 @@
 #pragma once
 #include "Soldier.h"
 
-#define HERO_SPEED 96
-
 class Hero : public Soldier
 {
 public:
@@ -11,4 +9,5 @@ public:
 
     virtual void update() override;
     virtual void render() override;
+    virtual void renderSelection() override;
 };

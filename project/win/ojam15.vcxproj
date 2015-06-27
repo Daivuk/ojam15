@@ -53,6 +53,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>EASY_GRAPHIX;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../onut/include;../../onut/EasyGraphix/eg/include;../../src</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -69,6 +71,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>EASY_GRAPHIX;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../onut/include;../../onut/EasyGraphix/eg/include;../../src</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -86,19 +89,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Blood.cpp" />
     <ClCompile Include="..\..\src\Bullet.cpp" />
     <ClCompile Include="..\..\src\Game.cpp" />
     <ClCompile Include="..\..\src\Hero.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\Puff.cpp" />
     <ClCompile Include="..\..\src\Rifleman.cpp" />
     <ClCompile Include="..\..\src\Soldier.cpp" />
     <ClCompile Include="..\..\src\Unit.cpp" />
     <ClCompile Include="..\..\src\View.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Blood.h" />
     <ClInclude Include="..\..\src\Bullet.h" />
     <ClInclude Include="..\..\src\Game.h" />
     <ClInclude Include="..\..\src\Hero.h" />
+    <ClInclude Include="..\..\src\Puff.h" />
     <ClInclude Include="..\..\src\Rifleman.h" />
     <ClInclude Include="..\..\src\Soldier.h" />
     <ClInclude Include="..\..\src\Unit.h" />

@@ -24,7 +24,12 @@ public:
 
     virtual void update() {}
     virtual void render() {}
+    virtual void renderSelection() {}
     virtual void onSpawn() {}
+    virtual Rect getHitRect(float &height) const { height = 0; return{position.x, position.y, 0, 0}; }
+    virtual void doDamage(float dmg) {}
+
+    Vector2 getSnapPos() const;
 
     LIST_LINK(Unit) linkMain;
     LIST_LINK(Unit) linkChunk;
@@ -34,4 +39,6 @@ public:
     bool bMarkedForDeletion = false;
     float fRadius = 16.f;
     Chunk *pChunk = nullptr;
+    Unit *pFollow = nullptr;
+    bool bChunkIt = false;
 };

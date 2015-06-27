@@ -1,11 +1,14 @@
 #include "Soldier.h"
 #include "Game.h"
+#include "Blood.h"
 
 #define STEERING_SIZE 32
 #define STEERSPEED 64
+#define FOLLOW_DISTANCE 64
 
 Soldier::Soldier()
 {
+    bChunkIt = true;
     pTexture = OGetTexture("soldier.png");
     pTextureColor = OGetTexture("soldier_color.png");
     direction = onut::randi(0, 3);
@@ -28,13 +31,25 @@ void Soldier::updateAttack()
 {
     if (fShootTime <= 0.f)
     {
-        g_pGame->forEachInRadius(this, fAttackRange, [this](Unit* pUnit, float dis)
+        Unit *pTargetFound = nullptr;
+        float closestDis = fAttackRange;
+
+        g_pGame->forEachInRadius(this, fAttackRange, [this, &closestDis, &pTargetFound](Unit* pUnit, float dis)
         {
             if (pUnit->team == team) return;
             if (pUnit->team == TEAM_NEUTRAL) return;
 
-            onStartAttack(pUnit->position);
+            if (dis < closestDis || (dynamic_cast<Hero*>(pTargetFound)))
+            {
+                pTargetFound = pUnit;
+                closestDis = dis;
+            }
         });
+
+        if (pTargetFound)
+        {
+            onStartAttack(pTargetFound->position);
+        }
     }
     else
     {
@@ -55,6 +70,22 @@ void Soldier::updateSteering()
 {
     if (fShootTime <= 0.f)
     {
+        // Follow
+        if (pFollow)
+        {
+            auto disToFollow = Vector2::DistanceSquared(position, pFollow->position);
+            if (disToFollow > FOLLOW_DISTANCE * FOLLOW_DISTANCE)
+            {
+                Vector2 dirWithOther = pFollow->position - position;
+                dirWithOther.Normalize();
+
+                moveDir *= velocity;
+                moveDir += dirWithOther * SOLDIER_SPEED;
+                velocity = moveDir.Length();
+                moveDir /= velocity;
+            }
+        }
+
         g_pGame->forEachInRadius(this, STEERING_SIZE, [this](Unit* pUnit, float dis)
         {
             Vector2 dirWithOther = position - pUnit->position;
@@ -210,7 +241,8 @@ void Soldier::updateIdleState()
 
 void Soldier::render()
 {
-    Rect rect{position.x - 4 * UNIT_SCALE, position.y - 6 * UNIT_SCALE, 8 * UNIT_SCALE, 8 * UNIT_SCALE};
+    auto snappedPos = getSnapPos();
+    Rect rect{snappedPos.x - 4 * UNIT_SCALE, snappedPos.y - 6 * UNIT_SCALE, 8 * UNIT_SCALE, 8 * UNIT_SCALE};
     auto frame = 0;
     if (fShootTime > 0.f)
     {
@@ -221,8 +253,6 @@ void Soldier::render()
     {
         frame = (int)(fWalkAnim * WALK_ANIM_SPEED) % 4;
     }
-    rect.x = std::roundf(rect.x / 2) * 2;
-    rect.y = std::roundf(rect.y / 2) * 2;
 
     Vector4 UVs{
         (float)(state * 4 + frame) * 8 / pTexture->getSizef().x,
@@ -238,20 +268,46 @@ void Soldier::render()
 void Soldier::onStartAttack(const Vector2& attackPos)
 {
     savedAttackPos = attackPos;
-    fShootTime = getShootTime();
-    fIdleTime = 0;
-    fShootDelay = getShootDelay();
-
-    if (fShootTime > 0.f)
+    auto shootTime = getShootTime();
+    if (shootTime > 0.f)
     {
-        auto dir = attackPos - position;
-        dir.Normalize();
-        if (dir.x > .71f) direction = DIRECTION_RIGHT;
-        else if (dir.x < -.71f) direction = DIRECTION_LEFT;
-        else if (dir.y < 0) direction = DIRECTION_UP;
-        else if (dir.y > 0) direction = DIRECTION_DOWN;
+        fShootTime = shootTime + onut::randf(-.25f, .25f);
+        fIdleTime = 0;
+        fShootDelay = getShootDelay();
 
-        state = SOLDIER_STATE_SHOOTING_STANDING;
-        fWalkAnim = 0.f;
+        if (fShootTime > 0.f)
+        {
+            auto dir = attackPos - position;
+            dir.Normalize();
+            if (dir.x > .71f) direction = DIRECTION_RIGHT;
+            else if (dir.x < -.71f) direction = DIRECTION_LEFT;
+            else if (dir.y < 0) direction = DIRECTION_UP;
+            else if (dir.y > 0) direction = DIRECTION_DOWN;
+
+            state = SOLDIER_STATE_SHOOTING_STANDING;
+            fWalkAnim = 0.f;
+        }
+    }
+}
+
+void Soldier::renderSelection()
+{
+    if (g_pGame->pMyHero)
+    {
+        if (pFollow && team == g_pGame->pMyHero->team)
+        {
+            OSB->drawSprite(OGetTexture("selectedSmall.png"), getSnapPos(), {TEAM_COLOR[team].x, TEAM_COLOR[team].y, TEAM_COLOR[team].z, .5f}, 0, 1);
+        }
+    }
+}
+
+void Soldier::doDamage(float dmg)
+{
+    g_pGame->spawn<Blood>({position.x, position.y - 6 * UNIT_SCALE * .5f});
+    life -= dmg;
+    if (life <= 0.f)
+    {
+        life = 0.f;
+        bMarkedForDeletion = true;
     }
 }

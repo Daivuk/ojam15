@@ -1,7 +1,7 @@
 #pragma once
 #include "onut.h"
 #include "View.h"
-#include "Unit.h"
+#include "Hero.h"
 #include "Bullet.h"
 
 #define MAX_UNITS 1000
@@ -61,13 +61,16 @@ public:
         }
 
         // Put him in the right chunk
-        pUnit->pChunk = getChunkAt(position);
-        pUnit->pChunk->pUnits->InsertTail(pUnit);
+        if (pUnit->bChunkIt)
+        {
+            pUnit->pChunk = getChunkAt(position);
+            pUnit->pChunk->pUnits->InsertTail(pUnit);
+        }
 
         return pUnit;
     }
 
-    void spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team);
+    void spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team, float damage);
 
     Chunk *getChunkAt(const Vector2 &pos)
     {
@@ -79,6 +82,8 @@ public:
     }
 
     void forEachInRadius(Unit *pMyUnit, float fRadius, const std::function<void(Unit*, float)>& callback);
+    void forEachInRadius(const Vector2 &position, float fRadius, const std::function<void(Unit*, float)>& callback);
+    void playSound(OSound *pSound, const Vector2 &position, float volume = 1);
 
     OPool *pUnitPool = nullptr;
     OPool *pBulletPool = nullptr;
@@ -87,6 +92,8 @@ public:
     TList<Bullet> *pBullets = nullptr;
     Vector2 camera;
     OTexture *pBulletTexture = nullptr;
+    Hero *pMyHero = nullptr;
+    onut::TiledMap *pTilemap = nullptr;
 };
 
 extern Game *g_pGame;

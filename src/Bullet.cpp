@@ -1,17 +1,24 @@
 #include "Bullet.h"
 #include "Unit.h"
 #include "Game.h"
+#include "Puff.h"
 
-Bullet::Bullet(const Vector2& from, const Vector2& to, float precision, int in_team)
-    : team(team)
+Bullet::Bullet(const Vector2& from, const Vector2& to, float precision, int in_team, float dmg)
+    : team(in_team)
+    , damage(dmg)
 {
     position = {from, 4 * UNIT_SCALE};
     Vector3 to3 = {to, 4 * UNIT_SCALE};
     trail[0] = trail[1] = trail[2] = position;
 
     velocity = to3 - position;
-    velocity.z += velocity.Length() / 50.f;
+    velocity.z += velocity.Length() / (30.f - velocity.Length() / 500.f * 10.f);
+    velocity.z += onut::randf(-precision, precision);
     velocity.Normalize();
+
+    // Randomize
+    velocity = Vector3::Transform(velocity, Matrix::CreateRotationZ(DirectX::XMConvertToRadians(onut::randf(-precision, precision))));
+
     velocity *= BULLET_SPEED;
 }
 
@@ -26,11 +33,32 @@ bool Bullet::update()
     velocity.z -= ODT * BULLET_GRAVITY;
 
     // Slow down bullets (Air resistance)
-    velocity.x *= 1 - ODT * 2;
-    velocity.y *= 1 - ODT * 2;
+    velocity.x *= 1 - ODT;
+    velocity.y *= 1 - ODT;
+
+    // Do we touch someone?
+    bool bHit = false;
+    g_pGame->forEachInRadius(position, 16.f, [this, &bHit](Unit *pUnit, float dis)
+    {
+        if (bHit) return;
+        if (pUnit->team == TEAM_NEUTRAL) return;
+        if (pUnit->team == team) return;
+        float h;
+        auto unitRect = pUnit->getHitRect(h);
+        if (position.z <= h)
+        {
+            if (dis <= pUnit->fRadius)// unitRect.Distance(position) <= 0.f)
+            {
+                pUnit->doDamage(damage);
+                bHit = true;
+            }
+        }
+    });
+    if (bHit) return true;
 
     if (position.z <= 0.f)
     {
+        g_pGame->spawn<Puff>(position);
         return true;
     }
 

@@ -1,11 +1,17 @@
 #include "Game.h"
 #include "Soldier.h"
+#include "Hero.h"
+
+Game *g_pGame;
 
 Game::Game()
 {
+    g_pGame = this;
+
     // Create unit pool
     auto biggest = sizeof(Unit);
     biggest = std::max<>(biggest, sizeof(Soldier));
+    biggest = std::max<>(biggest, sizeof(Hero));
     pUnitPool = new OPool(biggest, MAX_UNITS);
 
     // Create unit list
@@ -15,9 +21,15 @@ Game::Game()
     pChunks = new Chunk[CHUNK_COUNT * CHUNK_COUNT];
 
     // Spawn units randomly
-    spawn<Soldier>({100, 100});
-    spawn<Soldier>({120, 103});
-    spawn<Soldier>({110, 132});
+    spawn<Soldier>({100, 100}, TEAM_BLUE);
+    spawn<Soldier>({132, 103}, TEAM_BLUE);
+    spawn<Soldier>({116, 132}, TEAM_BLUE);
+
+    spawn<Soldier>({600, 400}, TEAM_RED);
+    spawn<Soldier>({632, 403}, TEAM_RED);
+    spawn<Soldier>({616, 432}, TEAM_RED);
+
+    spawn<Hero>({(132 + 600) / 2, (132 + 400) / 2}, TEAM_BLUE);
 }
 
 Game::~Game()

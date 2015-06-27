@@ -34,7 +34,7 @@ public:
     void render() override;
 
     template<typename Tunit>
-    Tunit *spawn(const Vector2 &position, int team = -1)
+    Tunit *spawn(const Vector2 &position, int team = TEAM_NEUTRAL)
     {
         auto pUnit = pUnitPool->alloc<Tunit>();
         if (!pUnit) return nullptr;
@@ -78,3 +78,5 @@ public:
     Chunk *pChunks = nullptr;
     Vector2 camera;
 };
+
+extern Game *g_pGame;

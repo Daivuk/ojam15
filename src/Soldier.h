@@ -41,6 +41,7 @@ public:
     virtual float getShootTime() const { return 0; }
     virtual float getShootDelay() const { return 0; }
 
+    LIST_LINK(Soldier) linkFollow;
     OTexture *pTexture;
     OTexture *pTextureColor;
     float fWalkAnim = 0.f;
@@ -48,6 +49,8 @@ public:
     int direction;
     int dieInDirection;
     Vector2 moveDir;
+    Vector2 lastMoveDir;
+    Vector2 followTargetPos;
     float velocity = 0.f;
     float fIdleTime = 0.f;
     float crountTime = 2;
@@ -57,5 +60,6 @@ public:
     float fShootDelay = 0.f;
     float fPrecision = 0.f;
     float life = 1.f;
+    bool bSteer = true;
     Vector2 savedAttackPos;
 };

@@ -4,7 +4,7 @@
 
 #define STEERING_SIZE 32
 #define STEERSPEED 64
-#define FOLLOW_DISTANCE 64
+#define FOLLOW_DISTANCE 16
 
 Soldier::Soldier()
 {
@@ -87,10 +87,10 @@ void Soldier::updateSteering()
         // Follow
         if (pFollow)
         {
-            auto disToFollow = Vector2::DistanceSquared(position, pFollow->position);
+            auto disToFollow = Vector2::DistanceSquared(position, followTargetPos);
             if (disToFollow > FOLLOW_DISTANCE * FOLLOW_DISTANCE)
             {
-                Vector2 dirWithOther = pFollow->position - position;
+                Vector2 dirWithOther = followTargetPos - position;
                 dirWithOther.Normalize();
 
                 moveDir *= velocity;
@@ -100,19 +100,22 @@ void Soldier::updateSteering()
             }
         }
 
-        g_pGame->forEachInRadius(this, STEERING_SIZE, [this](Unit* pUnit, float dis)
+        if (bSteer)
         {
-            Vector2 dirWithOther = position - pUnit->position;
-            dirWithOther /= dis;
+            g_pGame->forEachInRadius(this, STEERING_SIZE, [this](Unit* pUnit, float dis)
+            {
+                Vector2 dirWithOther = position - pUnit->position;
+                dirWithOther /= dis;
 
-            float steerForce = 1 - dis / STEERING_SIZE;
-            steerForce = std::max<>(steerForce, .5f);
+                float steerForce = 1 - dis / STEERING_SIZE;
+                steerForce = std::max<>(steerForce, .5f);
 
-            moveDir *= velocity;
-            moveDir += dirWithOther * steerForce * STEERSPEED;
-            velocity = moveDir.Length();
-            moveDir /= velocity;
-        });
+                moveDir *= velocity;
+                moveDir += dirWithOther * steerForce * STEERSPEED * 2;
+                velocity = moveDir.Length();
+                moveDir /= velocity;
+            });
+        }
     }
 }
 
@@ -127,11 +130,12 @@ void Soldier::updateMovement()
             fWalkAnim += ODT;
             state = SOLDIER_STATE_STANDING;
         }
-        else
+        else if (fWalkAnim > WALK_ANIM_SPEED * 3.f)
         {
             fWalkAnim = 0.f;
         }
 
+        lastMoveDir = moveDir;
         moveDir = Vector2::Zero;
         velocity = 0.f;
     }
@@ -357,6 +361,8 @@ void Soldier::doDamage(float dmg)
         life = 0.f;
         fShootTime = 0.f;
         bChunkIt = false;
+        linkFollow.Unlink();
+
         // A small change to spin first
         if (direction == DIRECTION_LEFT) dieInDirection = DIRECTION_UP;
         if (direction == DIRECTION_RIGHT) dieInDirection = DIRECTION_DOWN;

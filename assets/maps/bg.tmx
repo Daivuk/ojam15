@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="8" tileheight="8" nextobjectid="23">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="8" tileheight="8" nextobjectid="38">
  <tileset firstgid="1" name="tiles" tilewidth="8" tileheight="8">
   <image source="../textures/tiles.png" width="64" height="64"/>
   <terraintypes>
@@ -79,5 +79,20 @@
   <object id="20" type="BlueSoldier" gid="7" x="58" y="160" width="8" height="8"/>
   <object id="21" type="BlueSoldier" gid="7" x="50" y="164" width="8" height="8"/>
   <object id="22" type="BlueSoldier" gid="7" x="58" y="170" width="8" height="8"/>
+  <object id="23" type="BlueSoldier" gid="7" x="40" y="170" width="8" height="8"/>
+  <object id="24" type="BlueSoldier" gid="7" x="40" y="160" width="8" height="8"/>
+  <object id="25" type="BlueSoldier" gid="7" x="32" y="164" width="8" height="8"/>
+  <object id="26" type="BlueSoldier" gid="7" x="58" y="190" width="8" height="8"/>
+  <object id="27" type="BlueSoldier" gid="7" x="58" y="180" width="8" height="8"/>
+  <object id="28" type="BlueSoldier" gid="7" x="40" y="180" width="8" height="8"/>
+  <object id="29" type="BlueSoldier" gid="7" x="50" y="184" width="8" height="8"/>
+  <object id="30" type="BlueSoldier" gid="7" x="40" y="190" width="8" height="8"/>
+  <object id="31" type="BlueSoldier" gid="7" x="32" y="184" width="8" height="8"/>
+  <object id="32" type="BlueSoldier" gid="7" x="56" y="212" width="8" height="8"/>
+  <object id="33" type="BlueSoldier" gid="7" x="56" y="202" width="8" height="8"/>
+  <object id="34" type="BlueSoldier" gid="7" x="38" y="202" width="8" height="8"/>
+  <object id="35" type="BlueSoldier" gid="7" x="48" y="206" width="8" height="8"/>
+  <object id="36" type="BlueSoldier" gid="7" x="38" y="212" width="8" height="8"/>
+  <object id="37" type="BlueSoldier" gid="7" x="30" y="206" width="8" height="8"/>
  </objectgroup>
 </map>

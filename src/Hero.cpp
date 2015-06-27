@@ -1,14 +1,17 @@
 #include "Hero.h"
 #include "Game.h"
 
-#define FOLLOW_TOGGLE_RANGE 64
+#define FOLLOW_TOGGLE_RANGE 128
 
 auto g_actionSoundPlayTime = std::chrono::steady_clock::now();
 
 Hero::Hero()
 {
+    bSteer = false;
     life = 10.f;
     state = SOLDIER_STATE_CROUCHING;
+    pFollowers = new TList<Soldier>(offsetOf(&Soldier::linkFollow));
+    dir = Vector2::UnitY;
 }
 
 void Hero::update()
@@ -41,6 +44,7 @@ void Hero::update()
             if (pSoldier->pFollow == this) return;
 
             pSoldier->pFollow = this;
+            pFollowers->InsertTail(pSoldier);
 
             // Play sound like: Right away sir
             if (std::chrono::steady_clock::now() - g_actionSoundPlayTime > std::chrono::seconds(1))
@@ -62,6 +66,7 @@ void Hero::update()
             if (pSoldier->pFollow != this) return;
 
             pSoldier->pFollow = nullptr;
+            pSoldier->linkFollow.Unlink();
 
             // Play sound like: Right away sir
             if (std::chrono::steady_clock::now() - g_actionSoundPlayTime > std::chrono::seconds(1))
@@ -72,6 +77,57 @@ void Hero::update()
                 OGetSound(szSnd)->play(5.f);
             }
         });
+    }
+
+    dir += lastMoveDir * ODT * 5.f;
+    dir.Normalize();
+    Vector2 right{-dir.y, dir.x};
+
+#define OFFSET_FROM_HERO (12 * UNIT_SCALE)
+#define SEPARATION (8 * UNIT_SCALE)
+    static const Vector2 followPositions[] =
+    {
+        {-SEPARATION * .5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {SEPARATION * .5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {-SEPARATION * 1.5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {SEPARATION * 1.5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {-SEPARATION * .5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+        {SEPARATION * .5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+        {-SEPARATION * 1.5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+        {SEPARATION * 1.5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+
+        {0, SEPARATION * 2.2f + OFFSET_FROM_HERO},
+        {SEPARATION, SEPARATION * 2.2f + OFFSET_FROM_HERO},
+        {-SEPARATION, SEPARATION * 2.2f + OFFSET_FROM_HERO},
+
+        {-SEPARATION * 2.5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {SEPARATION * 2.5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {-SEPARATION * 2.5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+        {SEPARATION * 2.5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+        {SEPARATION * 2.f, SEPARATION * 2.2f + OFFSET_FROM_HERO},
+        {-SEPARATION * 2.f, SEPARATION * 2.2f + OFFSET_FROM_HERO},
+
+        {-SEPARATION * 3.5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {SEPARATION * 3.5f, SEPARATION * .5f + OFFSET_FROM_HERO},
+        {-SEPARATION * 3.5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+        {SEPARATION * 3.5f, SEPARATION * 1.5f + OFFSET_FROM_HERO},
+        {SEPARATION * 3.f, SEPARATION * 2.2f + OFFSET_FROM_HERO},
+        {-SEPARATION * 3.f, SEPARATION * 2.2f + OFFSET_FROM_HERO},
+    };
+    static const auto followPosCount = sizeof(followPositions) / sizeof(Vector2);
+
+    unsigned int i = 0;
+    for (auto pFollower = pFollowers->Head(); pFollower; pFollower = pFollowers->Next(pFollower))
+    {
+        if (i < followPosCount)
+        {
+            pFollower->followTargetPos = position + dir * followPositions[i].y + right * followPositions[i].x;
+            ++i;
+        }
+        else
+        {
+            pFollower->followTargetPos = position - dir * OFFSET_FROM_HERO;
+        }
     }
 }
 

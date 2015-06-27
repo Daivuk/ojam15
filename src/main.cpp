@@ -1,5 +1,9 @@
 #include <Windows.h>
 #include "onut.h"
+#include "View.h"
+#include "Game.h"
+
+View *g_pCurrentView = nullptr;
 
 void init();
 void update();
@@ -21,12 +25,15 @@ int CALLBACK WinMain(
 
 void init()
 {
+    g_pCurrentView = new Game();
 }
 
 void update()
 {
+    g_pCurrentView->update();
 }
 
 void render()
 {
+    g_pCurrentView->render();
 }

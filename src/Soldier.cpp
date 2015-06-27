@@ -34,17 +34,24 @@ void Soldier::updateAttack()
         Unit *pTargetFound = nullptr;
         float closestDis = fAttackRange;
 
-        g_pGame->forEachInRadius(this, fAttackRange, [this, &closestDis, &pTargetFound](Unit* pUnit, float dis)
+        auto lambda = [this, &closestDis, &pTargetFound](Unit* pUnit, float dis)
         {
             if (pUnit->team == team) return;
             if (pUnit->team == TEAM_NEUTRAL) return;
 
-            if (dis < closestDis || (dynamic_cast<Hero*>(pTargetFound)))
+            auto pHero = dynamic_cast<Hero*>(pTargetFound);
+            if (pTargetFound && !pHero)
+            {
+                if (dynamic_cast<Hero*>(pUnit)) return;
+            }
+            if (dis < closestDis || pHero)
             {
                 pTargetFound = pUnit;
                 closestDis = dis;
             }
-        });
+        };
+
+        g_pGame->forEachInRadius(this, fAttackRange, lambda);
 
         if (pTargetFound)
         {

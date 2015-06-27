@@ -4,7 +4,7 @@
 Rifleman::Rifleman()
 {
     fAttackRange = 500.f;
-    fPrecision = 5.f;
+    fPrecision = 10.f;
 }
 
 void Rifleman::update()

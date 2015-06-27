@@ -30,18 +30,26 @@ Game::Game()
     // Create chunks
     pChunks = new Chunk[CHUNK_COUNT * CHUNK_COUNT];
 
+    // Load map
     pTilemap = new onut::TiledMap("../../assets/maps/bg.tmx");
-
-    // Spawn units randomly
-    spawn<Rifleman>({100, 100}, TEAM_BLUE);
-    spawn<Rifleman>({132, 103}, TEAM_BLUE);
-    spawn<Rifleman>({116, 132}, TEAM_BLUE);
-
-    spawn<Rifleman>({600, 400}, TEAM_RED);
-    spawn<Rifleman>({632, 403}, TEAM_RED);
-    spawn<Rifleman>({616, 432}, TEAM_RED);
-
-    pMyHero = spawn<Hero>({50, 50}, TEAM_BLUE);
+    auto pObjLayer = dynamic_cast<onut::TiledMap::sObjectLayer*>(pTilemap->getLayer("units"));
+    for (decltype(pObjLayer->objectCount) i = 0; i < pObjLayer->objectCount; ++i)
+    {
+        auto pMapObj = pObjLayer->pObjects + i;
+        auto pos = (pMapObj->position + pMapObj->size * .5f) * UNIT_SCALE;
+        if (pMapObj->type == "Hero")
+        {
+            pMyHero = spawn<Hero>(pos, TEAM_BLUE);
+        }
+        else if (pMapObj->type == "BlueSoldier")
+        {
+            spawn<Rifleman>(pos, TEAM_BLUE);
+        }
+        else if (pMapObj->type == "RedSoldier")
+        {
+            spawn<Rifleman>(pos, TEAM_RED);
+        }
+    }
 }
 
 Game::~Game()
@@ -166,10 +174,10 @@ void Game::render()
 
     // Draw map
     RECT rect;
-    rect.left = static_cast<LONG>((camera.x * UNIT_SCALE / 8.f - OScreenWf * .5f) / (UNIT_SCALE/ 8.f));
-    rect.top = static_cast<LONG>((camera.y * UNIT_SCALE / 8.f - OScreenHf * .5f) / (UNIT_SCALE/ 8.f));
-    rect.right = static_cast<LONG>((camera.x * UNIT_SCALE/ 8.f + OScreenWf * .5f) / (UNIT_SCALE/ 8.f));
-    rect.bottom = static_cast<LONG>((camera.y * UNIT_SCALE/ 8.f + OScreenHf * .5f) / (UNIT_SCALE/ 8.f));
+    rect.left = static_cast<LONG>(((camera.x - OScreenWf * .5f)) / (UNIT_SCALE* 8.f));
+    rect.top = static_cast<LONG>(((camera.y - OScreenHf * .5f)) / (UNIT_SCALE* 8.f));
+    rect.right = static_cast<LONG>(((camera.x + OScreenWf)) / (UNIT_SCALE* 8.f));
+    rect.bottom = static_cast<LONG>(((camera.y + OScreenHf)) / (UNIT_SCALE* 8.f));
     Matrix transform = Matrix::Identity;
     transform *= Matrix::CreateScale(UNIT_SCALE);
     transform *= Matrix::CreateTranslation(-camera.x, -camera.y, 0);

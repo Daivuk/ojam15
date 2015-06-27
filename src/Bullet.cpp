@@ -3,9 +3,12 @@
 #include "Game.h"
 #include "Puff.h"
 
-Bullet::Bullet(const Vector2& from, const Vector2& to, float precision, int in_team, float dmg)
+#define BULLET_ALERT_RADIUS 200
+
+Bullet::Bullet(const Vector2& in_from, const Vector2& to, float precision, int in_team, float dmg)
     : team(in_team)
     , damage(dmg)
+    , from(in_from)
 {
     position = {from, 4 * UNIT_SCALE};
     Vector3 to3 = {to, 4 * UNIT_SCALE};
@@ -47,22 +50,43 @@ bool Bullet::update()
         auto unitRect = pUnit->getHitRect(h);
         if (position.z <= h)
         {
-            if (dis <= pUnit->fRadius)// unitRect.Distance(position) <= 0.f)
+            if (dis <= pUnit->fRadius)
             {
                 pUnit->doDamage(damage);
                 bHit = true;
             }
         }
     });
-    if (bHit) return true;
+    if (bHit)
+    {
+        alertNearbyEnemies();
+        return true;
+    }
 
     if (position.z <= 0.f)
     {
         g_pGame->spawn<Puff>(position);
+        alertNearbyEnemies();
         return true;
     }
 
     return false;
+}
+
+void Bullet::alertNearbyEnemies()
+{
+    g_pGame->forEachInRadius(position, BULLET_ALERT_RADIUS, [this](Unit *pUnit, float dis)
+    {
+        if (pUnit->team == TEAM_NEUTRAL) return;
+        if (pUnit->team == team) return;
+        auto pSoldier = dynamic_cast<Soldier*>(pUnit);
+        if (pSoldier)
+        {
+            if (dynamic_cast<Hero*>(pSoldier)) return;
+            pSoldier->followTargetPos = position + (from - position) * .333f; // Go one third of the bullet direction
+            pSoldier->bFollowAlert = true;
+        }
+    });
 }
 
 void Bullet::render()

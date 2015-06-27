@@ -100,6 +100,25 @@ void Soldier::updateSteering()
                 moveDir /= velocity;
             }
         }
+        else if (bFollowAlert)
+        {
+            // Follow alert
+            auto disToFollow = Vector2::DistanceSquared(position, followTargetPos);
+            if (disToFollow > FOLLOW_DISTANCE * FOLLOW_DISTANCE)
+            {
+                Vector2 dirWithOther = followTargetPos - position;
+                dirWithOther.Normalize();
+
+                moveDir *= velocity;
+                moveDir += dirWithOther * SOLDIER_SPEED;
+                velocity = moveDir.Length();
+                moveDir /= velocity;
+            }
+            else
+            {
+                bFollowAlert = false;
+            }
+        }
 
         if (bSteer)
         {
@@ -309,7 +328,12 @@ void Soldier::render()
         (float)(dir + 1) * 8 / pTexture->getSizef().y
     };
 
-    OSB->drawRectWithUVs(pTexture, rect, UVs);
+    OSB->drawRectWithUVs(pTexture, rect, {
+        UVs.x, 
+        UVs.y + (float)textureOffset * 8 / pTexture->getSizef().y,
+        UVs.z,
+        UVs.w + (float)textureOffset * 8 / pTexture->getSizef().y
+    });
     if (state != SOLDIER_STATE_DYING)
     {
         OSB->drawRectWithUVs(pTextureColor, rect, UVs, TEAM_COLOR[team]);

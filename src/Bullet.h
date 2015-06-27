@@ -13,10 +13,13 @@ public:
     bool update(); // Returns true when needs to be killed
     void render();
 
+    void alertNearbyEnemies();
+
     LIST_LINK(Bullet) linkMain;
     Vector3 position;
     Vector3 velocity;
     Vector3 trail[3];
+    Vector3 from;
     int team;
     bool bMarkedForDeletion = false;
     float damage = 1.f;

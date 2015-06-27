@@ -4,6 +4,7 @@
 #include "Rifleman.h"
 #include "Puff.h"
 #include "Blood.h"
+#include "Scout.h"
 
 Game *g_pGame;
 
@@ -18,6 +19,7 @@ Game::Game()
     biggest = std::max<>(biggest, sizeof(Rifleman));
     biggest = std::max<>(biggest, sizeof(Puff));
     biggest = std::max<>(biggest, sizeof(Blood));
+    biggest = std::max<>(biggest, sizeof(Scout));
     pUnitPool = new OPool(biggest, MAX_UNITS);
 
     // Create unit list
@@ -43,7 +45,14 @@ Game::Game()
         }
         else if (pMapObj->type == "BlueSoldier")
         {
-            spawn<Rifleman>(pos, TEAM_BLUE);
+            if (onut::randb())
+            {
+                spawn<Rifleman>(pos, TEAM_BLUE);
+            }
+            else
+            {
+                spawn<Scout>(pos, TEAM_BLUE);
+            }
         }
         else if (pMapObj->type == "RedSoldier")
         {

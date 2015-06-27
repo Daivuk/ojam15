@@ -11,6 +11,7 @@
     <ClCompile Include="..\..\src\Bullet.cpp" />
     <ClCompile Include="..\..\src\Puff.cpp" />
     <ClCompile Include="..\..\src\Blood.cpp" />
+    <ClCompile Include="..\..\src\Scout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Game.h" />
@@ -22,5 +23,6 @@
     <ClInclude Include="..\..\src\Bullet.h" />
     <ClInclude Include="..\..\src\Puff.h" />
     <ClInclude Include="..\..\src\Blood.h" />
+    <ClInclude Include="..\..\src\Scout.h" />
   </ItemGroup>
 </Project>

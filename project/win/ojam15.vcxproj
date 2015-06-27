@@ -96,6 +96,7 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Puff.cpp" />
     <ClCompile Include="..\..\src\Rifleman.cpp" />
+    <ClCompile Include="..\..\src\Scout.cpp" />
     <ClCompile Include="..\..\src\Soldier.cpp" />
     <ClCompile Include="..\..\src\Unit.cpp" />
     <ClCompile Include="..\..\src\View.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="..\..\src\Hero.h" />
     <ClInclude Include="..\..\src\Puff.h" />
     <ClInclude Include="..\..\src\Rifleman.h" />
+    <ClInclude Include="..\..\src\Scout.h" />
     <ClInclude Include="..\..\src\Soldier.h" />
     <ClInclude Include="..\..\src\Unit.h" />
     <ClInclude Include="..\..\src\View.h" />

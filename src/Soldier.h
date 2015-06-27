@@ -62,4 +62,6 @@ public:
     float life = 1.f;
     bool bSteer = true;
     Vector2 savedAttackPos;
+    int textureOffset = 0;
+    bool bFollowAlert = false;
 };

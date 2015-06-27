@@ -86,16 +86,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Bullet.cpp" />
     <ClCompile Include="..\..\src\Game.cpp" />
     <ClCompile Include="..\..\src\Hero.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\Rifleman.cpp" />
     <ClCompile Include="..\..\src\Soldier.cpp" />
     <ClCompile Include="..\..\src\Unit.cpp" />
     <ClCompile Include="..\..\src\View.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Bullet.h" />
     <ClInclude Include="..\..\src\Game.h" />
     <ClInclude Include="..\..\src\Hero.h" />
+    <ClInclude Include="..\..\src\Rifleman.h" />
     <ClInclude Include="..\..\src\Soldier.h" />
     <ClInclude Include="..\..\src\Unit.h" />
     <ClInclude Include="..\..\src\View.h" />

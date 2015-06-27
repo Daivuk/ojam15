@@ -2,11 +2,14 @@
 #include "onut.h"
 #include "View.h"
 #include "Unit.h"
+#include "Bullet.h"
 
 #define MAX_UNITS 1000
 #define MAP_SIZE 1280.f * 2.f
 #define CHUNK_SIZE 128
 #define CHUNK_COUNT ((int)(MAP_SIZE / CHUNK_SIZE) + 1)
+
+#define GRAVITY (40 * UNIT_SCALE)
 
 class Chunk
 {
@@ -64,6 +67,8 @@ public:
         return pUnit;
     }
 
+    void spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team);
+
     Chunk *getChunkAt(const Vector2 &pos)
     {
         if (pos.x < 0 || pos.y < 0 || pos.x >= MAP_SIZE || pos.y >= MAP_SIZE) return nullptr;
@@ -73,10 +78,15 @@ public:
         return pChunks + chunkIdk;
     }
 
+    void forEachInRadius(Unit *pMyUnit, float fRadius, const std::function<void(Unit*, float)>& callback);
+
     OPool *pUnitPool = nullptr;
+    OPool *pBulletPool = nullptr;
     TList<Unit> *pUnits = nullptr;
     Chunk *pChunks = nullptr;
+    TList<Bullet> *pBullets = nullptr;
     Vector2 camera;
+    OTexture *pBulletTexture = nullptr;
 };
 
 extern Game *g_pGame;

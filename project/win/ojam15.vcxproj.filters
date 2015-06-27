@@ -7,6 +7,8 @@
     <ClCompile Include="..\..\src\Unit.cpp" />
     <ClCompile Include="..\..\src\Soldier.cpp" />
     <ClCompile Include="..\..\src\Hero.cpp" />
+    <ClCompile Include="..\..\src\Rifleman.cpp" />
+    <ClCompile Include="..\..\src\Bullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Game.h" />
@@ -14,5 +16,7 @@
     <ClInclude Include="..\..\src\Unit.h" />
     <ClInclude Include="..\..\src\Soldier.h" />
     <ClInclude Include="..\..\src\Hero.h" />
+    <ClInclude Include="..\..\src\Rifleman.h" />
+    <ClInclude Include="..\..\src\Bullet.h" />
   </ItemGroup>
 </Project>

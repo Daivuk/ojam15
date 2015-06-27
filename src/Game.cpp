@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Soldier.h"
 #include "Hero.h"
+#include "Rifleman.h"
 
 Game *g_pGame;
 
@@ -12,22 +13,27 @@ Game::Game()
     auto biggest = sizeof(Unit);
     biggest = std::max<>(biggest, sizeof(Soldier));
     biggest = std::max<>(biggest, sizeof(Hero));
+    biggest = std::max<>(biggest, sizeof(Rifleman));
     pUnitPool = new OPool(biggest, MAX_UNITS);
 
     // Create unit list
     pUnits = new TList<Unit>(offsetOf(&Unit::linkMain));
 
+    // Create bullets
+    pBulletPool = new OPool(sizeof(Bullet), MAX_BULLETS);
+    pBullets = new TList<Bullet>(offsetOf(&Bullet::linkMain));
+
     // Create chunks
     pChunks = new Chunk[CHUNK_COUNT * CHUNK_COUNT];
 
     // Spawn units randomly
-    spawn<Soldier>({100, 100}, TEAM_BLUE);
-    spawn<Soldier>({132, 103}, TEAM_BLUE);
-    spawn<Soldier>({116, 132}, TEAM_BLUE);
+    spawn<Rifleman>({100, 100}, TEAM_BLUE);
+    spawn<Rifleman>({132, 103}, TEAM_BLUE);
+    spawn<Rifleman>({116, 132}, TEAM_BLUE);
 
-    spawn<Soldier>({600, 400}, TEAM_RED);
-    spawn<Soldier>({632, 403}, TEAM_RED);
-    spawn<Soldier>({616, 432}, TEAM_RED);
+    spawn<Rifleman>({600, 400}, TEAM_RED);
+    spawn<Rifleman>({632, 403}, TEAM_RED);
+    spawn<Rifleman>({616, 432}, TEAM_RED);
 
     spawn<Hero>({(132 + 600) / 2, (132 + 400) / 2}, TEAM_BLUE);
 }
@@ -35,6 +41,9 @@ Game::Game()
 Game::~Game()
 {
     // Free stuff
+    delete pBulletTexture;
+    delete pBullets;
+    delete pBulletPool;
     delete pUnits;
     delete pUnitPool;
 }
@@ -55,6 +64,19 @@ void Game::update()
         }
     }
 
+    // Update bullets
+    for (auto pBullet = pBullets->Head(); pBullet;)
+    {
+        if (pBullet->update())
+        {
+            auto pToDelete = pBullet;
+            pBullet = pBullets->Next(pBullet);
+            pBulletPool->dealloc(pToDelete);
+            continue;
+        }
+        pBullet = pBullets->Next(pBullet);
+    }
+
     // Delete those that need to be
     for (auto pUnit = pUnits->Head(); pUnit; )
     {
@@ -62,7 +84,7 @@ void Game::update()
         {
             auto pToDelete = pUnit;
             pUnit = pUnits->Next(pUnit);
-            delete pToDelete;
+            pUnitPool->dealloc(pToDelete);
             continue;
         }
         pUnit = pUnits->Next(pUnit);
@@ -89,8 +111,34 @@ void Game::update()
 
 void Game::render()
 {
+    // Render bullets offscreen
+    if (!pBulletTexture)
+    {
+        pBulletTexture = OTexture::createRenderTarget({OSettings->getResolution().x / UNIT_SCALE, OSettings->getResolution().y / UNIT_SCALE});
+    }
+
+    ORenderer->bindRenderTarget(pBulletTexture);
+    egStatePush();
+    OSB->begin();
+    OSB->drawRect(nullptr, {0, 0, (float)OSettings->getResolution().x / UNIT_SCALE, (float)OSettings->getResolution().y / UNIT_SCALE}, Color::Black);
+    OSB->end();
+    egModelPush();
+    egModelTranslate(-camera.x, -camera.y, 0);
+    egModelScale(1.f / UNIT_SCALE, 1.f / UNIT_SCALE, 1.f);
+    OPB->begin(onut::ePrimitiveType::LINES);
+    for (auto pBullet = pBullets->Head(); pBullet; pBullet = pBullets->Next(pBullet))
+    {
+        pBullet->render();
+    }
+    OPB->end();
+    egModelPop();
+    egPostProcess();
+    egStatePop();
+    ORenderer->bindRenderTarget();
+
     // Clear screen
     ORenderer->clear(Color{.15f, .25f, .20f, 1} * 2);
+    ORenderer->resetState();
 
     // Draw units
     egModelPush();
@@ -102,5 +150,52 @@ void Game::render()
         pUnit->render();
     }
     OSB->end();
+
+    // Draw bullets overlay
+    egStatePush();
+    egBlendFunc(EG_ONE, EG_ONE);
+    OSB->begin();
+    OSB->drawRect(pBulletTexture, {0, 0, (float)OSettings->getResolution().x, (float)OSettings->getResolution().y});
+    OSB->end();
+    egStatePop();
+
     egModelPop();
+}
+
+void Game::forEachInRadius(Unit *pMyUnit, float fRadius, const std::function<void(Unit*, float)>& callback)
+{
+    // Apply steering behaviour
+    int chunkFromX = (int)(pMyUnit->position.x - fRadius) / CHUNK_SIZE;
+    int chunkFromY = (int)(pMyUnit->position.y - fRadius) / CHUNK_SIZE;
+    int chunkToX = (int)(pMyUnit->position.x + fRadius) / CHUNK_SIZE;
+    int chunkToY = (int)(pMyUnit->position.y + fRadius) / CHUNK_SIZE;
+    chunkFromX = std::min<>(CHUNK_COUNT, std::max<>(0, chunkFromX));
+    chunkFromY = std::min<>(CHUNK_COUNT, std::max<>(0, chunkFromY));
+    chunkToX = std::min<>(CHUNK_COUNT, std::max<>(0, chunkToX));
+    chunkToY = std::min<>(CHUNK_COUNT, std::max<>(0, chunkToY));
+
+    for (int chunkY = chunkFromY; chunkY <= chunkToY; ++chunkY)
+    {
+        for (int chunkX = chunkFromX; chunkX <= chunkToX; ++chunkX)
+        {
+            auto pChunk = g_pGame->pChunks + (chunkY * CHUNK_COUNT + chunkX);
+            for (auto pUnit = pChunk->pUnits->Head(); pUnit; pUnit = pChunk->pUnits->Next(pUnit))
+            {
+                if (pUnit == pMyUnit) continue;
+                float dis = Vector2::DistanceSquared(pMyUnit->position, pUnit->position);
+                if (dis <= fRadius * fRadius)
+                {
+                    dis = sqrtf(dis);
+                    callback(pUnit, dis);
+                }
+            }
+        }
+    }
+}
+
+void Game::spawnBullet(const Vector2& from, const Vector2& to, float precision, int in_team)
+{
+    auto pBullet = pBulletPool->alloc<Bullet>(from, to, precision, in_team);
+    if (!pBullet) return;
+    pBullets->InsertTail(pBullet);
 }

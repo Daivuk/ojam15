@@ -100,6 +100,7 @@ public:
     Vector2 dragDownPos;
     Vector2 dragDownCamPos;
     bool *collisions = nullptr;
+    Rect endTriggerRect;
 };
 
 extern Game *g_pGame;

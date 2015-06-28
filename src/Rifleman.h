@@ -1,6 +1,8 @@
 #pragma once
 #include "Soldier.h"
 
+extern float g_fRifleVolume;
+
 class Rifleman : public Soldier
 {
 public:

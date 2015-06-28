@@ -105,11 +105,29 @@ Game::Game()
             crew[0]->pMortar->pCrew2 = crew[1];
             crew[0]->pMortar->pCrew1->fAttackRange = 700.f;
         }
+        else if (pMapObj->type == "EndTrigger")
+        {
+            endTriggerRect.x = pMapObj->position.x * UNIT_SCALE;
+            endTriggerRect.y = pMapObj->position.y * UNIT_SCALE;
+            endTriggerRect.z = pMapObj->size.x * UNIT_SCALE;
+            endTriggerRect.w = pMapObj->size.y * UNIT_SCALE;
+        }
     }
 }
 
 Game::~Game()
 {
+    // Delete remaining objects. Because the pools don't call the destructors
+    // in it's destructor
+    while (!pBullets->Empty())
+    {
+        pBulletPool->dealloc(pBullets->Head());
+    }
+    while (!pUnits->Empty())
+    {
+        pUnitPool->dealloc(pUnits->Head());
+    }
+
     // Free stuff
     delete[] collisions;
     delete pBulletTexture;
@@ -127,6 +145,12 @@ Game::~Game()
 
 void Game::update()
 {
+    if (g_fRifleVolume < 1.f)
+    {
+        g_fRifleVolume += ODT;
+        if (g_fRifleVolume > 1.f) g_fRifleVolume = 1.f;
+    }
+
     // Update units
     for (auto pUnit = pUnits->Head(); pUnit; pUnit = pUnits->Next(pUnit))
     {
@@ -202,6 +226,22 @@ void Game::update()
     }
 
     // Clamp camera to map limits
+    if (camera.x - OScreenWf * .5f < 0)
+    {
+        camera.x = OScreenWf * .5f;
+    }
+    if (camera.y - OScreenHf * .5f < 0)
+    {
+        camera.y = OScreenHf * .5f;
+    }
+    if (camera.x + OScreenWf * .5f > MAP_SIZE)
+    {
+        camera.x = MAP_SIZE - OScreenWf * .5f;
+    }
+    if (camera.y + OScreenHf * .5f > MAP_SIZE)
+    {
+        camera.y = MAP_SIZE - OScreenHf * .5f;
+    }
 
     // Update bullets
     for (auto pBullet = pBullets->Head(); pBullet;)
@@ -285,6 +325,15 @@ void Game::update()
             prev = it;
         }
     }
+
+    // Check if we reached the end
+    if (pMyHero)
+    {
+        if (endTriggerRect.Contains(pMyHero->position))
+        {
+            // show menu n stuff
+        }
+    }
 }
 
 void Game::render()
@@ -359,7 +408,7 @@ void Game::render()
     egStatePush();
     egBlendFunc(EG_ONE, EG_ONE);
     OSB->begin();
-    OSB->drawRect(pBulletTexture, {0, 0, (float)OSettings->getResolution().x, (float)OSettings->getResolution().y});
+    OSB->drawRect(pBulletTexture, {0, 0, OScreenWf, OScreenHf});
     OSB->end();
     egStatePop();
 

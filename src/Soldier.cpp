@@ -462,7 +462,9 @@ void Soldier::doDamage(float dmg)
                 if (pSoldier->pMortar->pCrew2)
                 {
                     pSoldier->pMortar->pCrew2->bLocked = false;
+                    pSoldier->pMortar->pCrew2->fAttackRange = 350.f;
                 }
+                pSoldier->fAttackRange = 350.f;
                 pSoldier->pMortar->pCrew1 = nullptr;
                 pSoldier->pMortar->pCrew2 = nullptr;
                 pSoldier->pMortar = nullptr;
@@ -477,8 +479,10 @@ void Soldier::doDamage(float dmg)
             {
                 if (pSoldier->pMortar)
                 {
+                    pSoldier->fAttackRange = 350.f;
                     if (pSoldier->pMortar->pCrew2 == this)
                     {
+                        pSoldier->fAttackRange = 350.f;
                         pSoldier->pMortar->pCrew1 = nullptr;
                         pSoldier->pMortar->pCrew2 = nullptr;
                         pSoldier->pMortar = nullptr;

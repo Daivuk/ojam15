@@ -1,5 +1,6 @@
 #include "Scout.h"
 #include "Game.h"
+#include "Rifleman.h"
 
 Scout::Scout()
 {
@@ -21,5 +22,6 @@ void Scout::render()
 void Scout::onShoot(const Vector2& attackPos)
 {
     g_pGame->spawnBullet(position, attackPos, fPrecision, team, 1.0f, false);
-    g_pGame->playSound(OGetSound("rifle.wav"), position, .75f);
+    g_pGame->playSound(OGetSound("rifle.wav"), position, onut::lerp(.25f, 1.f, g_fRifleVolume));
+    g_fRifleVolume = 0;
 }

@@ -320,7 +320,7 @@ void Game::render()
     ORenderer->bindRenderTarget();
 
     // Clear screen
-    ORenderer->clear(Color{.15f, .25f, .20f, 1} * 2);
+    ORenderer->clear(Color{0, 0, 0, 1});
     ORenderer->resetState();
 
     egModelPush();

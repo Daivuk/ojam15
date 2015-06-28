@@ -38,6 +38,7 @@ public:
         height = 6 * UNIT_SCALE; 
         return{position.x - 2 * UNIT_SCALE, position.y - 2 * UNIT_SCALE, 4 * UNIT_SCALE, 4 * UNIT_SCALE};
     }
+    virtual float getFullHealth() { return 1.f; }
 
     virtual float getShootTime() const { return 0; }
     virtual float getShootDelay() const { return 0; }

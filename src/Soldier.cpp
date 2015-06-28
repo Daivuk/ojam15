@@ -9,6 +9,7 @@
 
 Soldier::Soldier()
 {
+    life = 1.f;
     bChunkIt = true;
     pTexture = OGetTexture("soldier.png");
     pTextureColor = OGetTexture("soldier_color.png");
@@ -388,6 +389,29 @@ void Soldier::render()
     if (state != SOLDIER_STATE_DYING)
     {
         OSB->drawRectWithUVs(pTextureColor, rect, UVs, TEAM_COLOR[team]);
+
+        if (life < getFullHealth())
+        {
+            OSB->drawRect(nullptr,
+            {position.x - 3 * UNIT_SCALE - 1, position.y - 8 * UNIT_SCALE - 1, 6 * UNIT_SCALE + 2, 4},
+            {0, 0, 0, 1});
+            float percent = (life / getFullHealth());
+            static const Color colorFULL{0, 1, 0, 1};
+            static const Color colorMid{1, 1, 0, 1};
+            static const Color colorEmpty{1, 0, 0, 1};
+            Color color = colorFULL;
+            if (percent > .5f)
+            {
+                color = Color::Lerp(colorMid, colorFULL, percent * 2.f - 1.f);
+            }
+            else
+            {
+                color = Color::Lerp(colorEmpty, colorMid, percent * 2.f);
+            }
+            OSB->drawRect(nullptr,
+            {position.x - 3 * UNIT_SCALE, position.y - 8 * UNIT_SCALE, 6 * UNIT_SCALE * percent, 2},
+            color);
+        }
     }
 }
 

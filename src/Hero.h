@@ -13,6 +13,7 @@ public:
     virtual void update() override;
     virtual void render() override;
     virtual void renderSelection() override;
+    virtual float getFullHealth() override { return 10.f; }
 
     TList<Soldier> *pFollowers = nullptr;
     Vector2 dir;

@@ -8,6 +8,7 @@
 #include "Mortar.h"
 #include "Smoke.h"
 #include "MortarImpact.h"
+#include "SandBag.h"
 
 Game *g_pGame;
 
@@ -26,6 +27,7 @@ Game::Game()
     biggest = std::max<>(biggest, sizeof(Mortar));
     biggest = std::max<>(biggest, sizeof(Smoke));
     biggest = std::max<>(biggest, sizeof(MortarImpact));
+    biggest = std::max<>(biggest, sizeof(SandBag));
     pUnitPool = new OPool(biggest, MAX_UNITS);
 
     // Create unit list
@@ -40,6 +42,15 @@ Game::Game()
 
     // Load map
     pTilemap = new onut::TiledMap("../../assets/maps/bg.tmx");
+
+    auto pCollisionLayer = dynamic_cast<onut::TiledMap::sTileLayer*>(pTilemap->getLayer("collision"));
+    collisions = new bool[pTilemap->getWidth() * pTilemap->getHeight()];
+    memset(collisions, 0, sizeof(bool) * pTilemap->getWidth() * pTilemap->getHeight());
+    for (int i = 0; i < pCollisionLayer->width * pCollisionLayer->height; ++i)
+    {
+        collisions[i] = (pCollisionLayer->tileIds[i]) ? true : collisions[i];
+    }
+
     auto pObjLayer = dynamic_cast<onut::TiledMap::sObjectLayer*>(pTilemap->getLayer("units"));
     for (decltype(pObjLayer->objectCount) i = 0; i < pObjLayer->objectCount; ++i)
     {
@@ -48,6 +59,11 @@ Game::Game()
         if (pMapObj->type == "Hero")
         {
             pMyHero = spawn<Hero>(pos, TEAM_BLUE);
+            camera = pos;
+        }
+        else if (pMapObj->type == "Sandbag")
+        {
+            spawn<SandBag>(pos, TEAM_NEUTRAL);
         }
         else if (pMapObj->type == "BlueSoldier")
         {
@@ -75,7 +91,7 @@ Game::Game()
             crew[1]->bLocked = true;
             crew[0]->pMortar->pCrew1 = crew[0];
             crew[0]->pMortar->pCrew2 = crew[1];
-            crew[0]->pMortar->pCrew1->fAttackRange = 700.f;
+            crew[0]->pMortar->pCrew1->fAttackRange = 600.f;
         }
         else if (pMapObj->type == "RedMortar")
         {
@@ -87,7 +103,7 @@ Game::Game()
             crew[1]->bLocked = true;
             crew[0]->pMortar->pCrew1 = crew[0];
             crew[0]->pMortar->pCrew2 = crew[1];
-            crew[0]->pMortar->pCrew1->fAttackRange = 700.f;
+            crew[0]->pMortar->pCrew1->fAttackRange = 600.f;
         }
     }
 }
@@ -95,6 +111,7 @@ Game::Game()
 Game::~Game()
 {
     // Free stuff
+    delete[] collisions;
     delete pBulletTexture;
     delete pBullets;
     delete pBulletPool;
@@ -102,6 +119,11 @@ Game::~Game()
     delete pUnitPool;
     delete pTilemap;
 }
+
+#define KEYBOARD_SCROLL_SPEED 768
+#define EDGE_SCROLL_SPEED 768
+#define DRAG_SCROLL_SPEED -1
+#define EDGE_SCROLL_SIZE 16
 
 void Game::update()
 {
@@ -121,6 +143,65 @@ void Game::update()
             }
         }
     }
+
+    // Do mouse/keyboard scrolling
+    if (OInput->isStateDown(DIK_MOUSEB3))
+    {
+        if (OInput->isStateJustDown(DIK_MOUSEB3))
+        {
+            dragDownPos = OMousePos;
+            dragDownCamPos = camera;
+        }
+        auto diff = OMousePos - dragDownPos;
+        camera = dragDownCamPos + diff * DRAG_SCROLL_SPEED;
+    }
+    else
+    {
+        if (OInput->isStateDown(DIK_SPACE))
+        {
+            if (pMyHero)
+            {
+                camera = pMyHero->position;
+            }
+        }
+        else
+        {
+            if (OMousePos.x >= 0 && OMousePos.x <= EDGE_SCROLL_SIZE)
+            {
+                camera.x -= EDGE_SCROLL_SPEED * ODT;
+            }
+            if (OMousePos.y >= 0 && OMousePos.y <= EDGE_SCROLL_SIZE)
+            {
+                camera.y -= EDGE_SCROLL_SPEED * ODT;
+            }
+            if (OMousePos.x <= OScreenWf && OMousePos.x >= OScreenWf - EDGE_SCROLL_SIZE)
+            {
+                camera.x += EDGE_SCROLL_SPEED * ODT;
+            }
+            if (OMousePos.y <= OScreenHf && OMousePos.y >= OScreenHf - EDGE_SCROLL_SIZE)
+            {
+                camera.y += EDGE_SCROLL_SPEED * ODT;
+            }
+            if (OInput->isStateDown(DIK_LEFT))
+            {
+                camera.x -= KEYBOARD_SCROLL_SPEED * ODT;
+            }
+            if (OInput->isStateDown(DIK_RIGHT))
+            {
+                camera.x += KEYBOARD_SCROLL_SPEED * ODT;
+            }
+            if (OInput->isStateDown(DIK_UP))
+            {
+                camera.y -= KEYBOARD_SCROLL_SPEED * ODT;
+            }
+            if (OInput->isStateDown(DIK_DOWN))
+            {
+                camera.y += KEYBOARD_SCROLL_SPEED * ODT;
+            }
+        }
+    }
+
+    // Clamp camera to map limits
 
     // Update bullets
     for (auto pBullet = pBullets->Head(); pBullet;)
@@ -242,22 +323,24 @@ void Game::render()
     ORenderer->clear(Color{.15f, .25f, .20f, 1} * 2);
     ORenderer->resetState();
 
+    egModelPush();
+
     // Draw map
     RECT rect;
-    rect.left = static_cast<LONG>(((camera.x - OScreenWf * .5f)) / (UNIT_SCALE* 8.f));
-    rect.top = static_cast<LONG>(((camera.y - OScreenHf * .5f)) / (UNIT_SCALE* 8.f));
-    rect.right = static_cast<LONG>(((camera.x + OScreenWf)) / (UNIT_SCALE* 8.f));
-    rect.bottom = static_cast<LONG>(((camera.y + OScreenHf)) / (UNIT_SCALE* 8.f));
+    rect.left = static_cast<LONG>(((camera.x - OScreenWf * .5f)) / ((float)UNIT_SCALE* 8.f));
+    rect.top = static_cast<LONG>(((camera.y - OScreenHf * .5f)) / ((float)UNIT_SCALE* 8.f));
+    rect.right = static_cast<LONG>(((camera.x + OScreenWf)) / ((float)UNIT_SCALE* 8.f));
+    rect.bottom = static_cast<LONG>(((camera.y + OScreenHf)) / ((float)UNIT_SCALE* 8.f));
     Matrix transform = Matrix::Identity;
     transform *= Matrix::CreateScale(UNIT_SCALE);
-    transform *= Matrix::CreateTranslation(-camera.x, -camera.y, 0);
+    transform *= Matrix::CreateTranslation(cameraOffset.x, cameraOffset.y, 0);
     pTilemap->setTransform(transform);
     pTilemap->render(rect);
 
     // Draw units
     egModelPush();
-    egModelTranslate(cameraOffset.x, cameraOffset.y, 0);
     OSB->begin();
+    egModelTranslate(cameraOffset.x, cameraOffset.y, 0);
     egFilter(EG_FILTER_NEAREST);
 
     for (auto pUnit = pUnits->Head(); pUnit; pUnit = pUnits->Next(pUnit))
@@ -279,6 +362,8 @@ void Game::render()
     OSB->drawRect(pBulletTexture, {0, 0, (float)OSettings->getResolution().x, (float)OSettings->getResolution().y});
     OSB->end();
     egStatePop();
+
+    egModelPop();
 }
 
 void Game::forEachInRadius(Unit *pMyUnit, float fRadius, const std::function<void(Unit*, float)>& callback)
@@ -288,10 +373,10 @@ void Game::forEachInRadius(Unit *pMyUnit, float fRadius, const std::function<voi
     int chunkFromY = (int)(pMyUnit->position.y - fRadius) / CHUNK_SIZE;
     int chunkToX = (int)(pMyUnit->position.x + fRadius) / CHUNK_SIZE;
     int chunkToY = (int)(pMyUnit->position.y + fRadius) / CHUNK_SIZE;
-    chunkFromX = std::min<>(CHUNK_COUNT, std::max<>(0, chunkFromX));
-    chunkFromY = std::min<>(CHUNK_COUNT, std::max<>(0, chunkFromY));
-    chunkToX = std::min<>(CHUNK_COUNT, std::max<>(0, chunkToX));
-    chunkToY = std::min<>(CHUNK_COUNT, std::max<>(0, chunkToY));
+    chunkFromX = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkFromX));
+    chunkFromY = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkFromY));
+    chunkToX = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkToX));
+    chunkToY = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkToY));
 
     for (int chunkY = chunkFromY; chunkY <= chunkToY; ++chunkY)
     {
@@ -319,10 +404,10 @@ void Game::forEachInRadius(const Vector2 &position, float fRadius, const std::fu
     int chunkFromY = (int)(position.y - fRadius) / CHUNK_SIZE;
     int chunkToX = (int)(position.x + fRadius) / CHUNK_SIZE;
     int chunkToY = (int)(position.y + fRadius) / CHUNK_SIZE;
-    chunkFromX = std::min<>(CHUNK_COUNT, std::max<>(0, chunkFromX));
-    chunkFromY = std::min<>(CHUNK_COUNT, std::max<>(0, chunkFromY));
-    chunkToX = std::min<>(CHUNK_COUNT, std::max<>(0, chunkToX));
-    chunkToY = std::min<>(CHUNK_COUNT, std::max<>(0, chunkToY));
+    chunkFromX = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkFromX));
+    chunkFromY = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkFromY));
+    chunkToX = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkToX));
+    chunkToY = std::min<>(CHUNK_COUNT - 1, std::max<>(0, chunkToY));
 
     for (int chunkY = chunkFromY; chunkY <= chunkToY; ++chunkY)
     {
@@ -376,4 +461,8 @@ void Game::playSound(OSound *pSound, const Vector2 &position, float volume)
             pSound->play(dis * volume, balance);
         }
     }
+}
+
+bool Game::collisionAt(const Vector2& pos) const
+{
 }

@@ -3,7 +3,7 @@
 
 Rifleman::Rifleman()
 {
-    fAttackRange = 400.f;
+    fAttackRange = 350.f;
     fPrecision = 10.f;
 }
 

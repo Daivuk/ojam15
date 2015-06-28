@@ -98,6 +98,7 @@
     <ClCompile Include="..\..\src\MortarImpact.cpp" />
     <ClCompile Include="..\..\src\Puff.cpp" />
     <ClCompile Include="..\..\src\Rifleman.cpp" />
+    <ClCompile Include="..\..\src\SandBag.cpp" />
     <ClCompile Include="..\..\src\Scout.cpp" />
     <ClCompile Include="..\..\src\Smoke.cpp" />
     <ClCompile Include="..\..\src\Soldier.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="..\..\src\MortarImpact.h" />
     <ClInclude Include="..\..\src\Puff.h" />
     <ClInclude Include="..\..\src\Rifleman.h" />
+    <ClInclude Include="..\..\src\SandBag.h" />
     <ClInclude Include="..\..\src\Scout.h" />
     <ClInclude Include="..\..\src\Smoke.h" />
     <ClInclude Include="..\..\src\Soldier.h" />

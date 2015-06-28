@@ -16,7 +16,23 @@ Hero::Hero()
 
 void Hero::update()
 {
-    auto lt = OGamePad(0)->getLeftThumb();
+    Vector2 lt;// = OGamePad(0)->getLeftThumb();
+    if (OInput->isStateDown(DIK_W))
+    {
+        lt += Vector2(0, -1);
+    }
+    if (OInput->isStateDown(DIK_A))
+    {
+        lt += Vector2(-1, 0);
+    }
+    if (OInput->isStateDown(DIK_S))
+    {
+        lt += Vector2(0, 1);
+    }
+    if (OInput->isStateDown(DIK_D))
+    {
+        lt += Vector2(1, 0);
+    }
     if (lt.LengthSquared() > .25f * .25f)
     {
         lt.Normalize();
@@ -31,10 +47,11 @@ void Hero::update()
 
     Soldier::update();
 
-    g_pGame->camera = position;
+    //g_pGame->camera = position + dir * 64.f;
 
     // Order other units to follow
-    if (OGamePad(0)->isJustPressed(onut::GamePad::eGamePad::A))
+    //if (OGamePad(0)->isJustPressed(onut::GamePad::eGamePad::A))
+    if (OInput->isStateDown(DIK_MOUSEB1))
     {
         g_pGame->forEachInRadius(this, FOLLOW_TOGGLE_RANGE, [this](Unit* pUnit, float dis)
         {
@@ -57,7 +74,8 @@ void Hero::update()
             }
         });
     }
-    if (OGamePad(0)->isJustPressed(onut::GamePad::eGamePad::B))
+    //if (OGamePad(0)->isJustPressed(onut::GamePad::eGamePad::B))
+    if (OInput->isStateDown(DIK_MOUSEB2))
     {
         g_pGame->forEachInRadius(this, FOLLOW_TOGGLE_RANGE, [this](Unit* pUnit, float dis)
         {

@@ -3,7 +3,7 @@
 
 Scout::Scout()
 {
-    fAttackRange = 500.f;
+    fAttackRange = 650.f;
     fPrecision = 3.f;
     textureOffset = 4;
 }

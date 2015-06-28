@@ -146,14 +146,14 @@ void Bullet::alertNearbyEnemies()
             if (dynamic_cast<Hero*>(pSoldier)) return;
             if (pSoldier->bLocked) return;
 
-            if (pSoldier->pMortar)
-            {
-                auto dir = position - from;
-                dir.Normalize();
-                pSoldier->followTargetPos = position + dir * 32.f; // Move away a bit
-                pSoldier->bFollowAlert = true;
-            }
-            else
+            if (!pSoldier->pMortar)
+            //{
+            //    auto dir = position - from;
+            //    dir.Normalize();
+            //    pSoldier->followTargetPos = position + dir * 32.f; // Move away a bit
+            //    pSoldier->bFollowAlert = true;
+            //}
+            //else
             {
                 pSoldier->followTargetPos = position + (from - position) * .333f; // Go one third of the bullet direction
                 pSoldier->bFollowAlert = true;

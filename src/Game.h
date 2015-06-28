@@ -4,8 +4,10 @@
 #include "Hero.h"
 #include "Bullet.h"
 
+#define DRAW_SCALE .5f
+
 #define MAX_UNITS 1000
-#define MAP_SIZE 1280.f * 2.f
+#define MAP_SIZE (128.f * UNIT_SCALE * 8)
 #define CHUNK_SIZE 128
 #define CHUNK_COUNT ((int)(MAP_SIZE / CHUNK_SIZE) + 1)
 
@@ -84,6 +86,7 @@ public:
     void forEachInRadius(Unit *pMyUnit, float fRadius, const std::function<void(Unit*, float)>& callback);
     void forEachInRadius(const Vector2 &position, float fRadius, const std::function<void(Unit*, float)>& callback);
     void playSound(OSound *pSound, const Vector2 &position, float volume = 1);
+    bool collisionAt(const Vector2& pos) const;
 
     OPool *pUnitPool = nullptr;
     OPool *pBulletPool = nullptr;
@@ -94,6 +97,9 @@ public:
     OTexture *pBulletTexture = nullptr;
     Hero *pMyHero = nullptr;
     onut::TiledMap *pTilemap = nullptr;
+    Vector2 dragDownPos;
+    Vector2 dragDownCamPos;
+    bool *collisions = nullptr;
 };
 
 extern Game *g_pGame;

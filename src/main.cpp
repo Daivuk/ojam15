@@ -7,6 +7,8 @@ Game *pGame = nullptr;
 onut::UIContext *pContext;
 onut::UIControl *pScreen;
 
+std::string sCurrentMap = "../../assets/maps/bg.tmx";
+
 void init();
 void update();
 void render();
@@ -228,7 +230,15 @@ void init()
     {
         OPlaySound("buttonClick.wav");
         pScreen->getChild("menuMain")->isVisible = false;
-        pGame = new Game();
+        sCurrentMap = "../../assets/maps/bg.tmx";
+        pGame = new Game(sCurrentMap);
+    };
+    pScreen->getChild<onut::UIButton>("btnSandbox")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
+    {
+        OPlaySound("buttonClick.wav");
+        pScreen->getChild("menuMain")->isVisible = false;
+        sCurrentMap = "../../assets/maps/sandbox.tmx";
+        pGame = new Game(sCurrentMap);
     };
     pScreen->getChild<onut::UIButton>("btnHowToPlay")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
     {
@@ -265,7 +275,7 @@ void init()
         OPlaySound("buttonClick.wav");
         pScreen->getChild("menuGame")->isVisible = false;
         delete pGame;
-        pGame = new Game();
+        pGame = new Game(sCurrentMap);
     };
 
     pScreen->getChild("menuVictory")->getChild<onut::UIButton>("btnQuit")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
@@ -286,7 +296,7 @@ void init()
         OPlaySound("buttonClick.wav");
         pScreen->getChild("menuVictory")->isVisible = false;
         delete pGame;
-        pGame = new Game();
+        pGame = new Game(sCurrentMap);
     };
 
     pScreen->getChild("menuDead")->getChild<onut::UIButton>("btnQuit")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
@@ -307,7 +317,7 @@ void init()
         OPlaySound("buttonClick.wav");
         pScreen->getChild("menuDead")->isVisible = false;
         delete pGame;
-        pGame = new Game();
+        pGame = new Game(sCurrentMap);
     };
 
     pScreen->getChild("menuMain")->isVisible = true;

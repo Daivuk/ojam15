@@ -32,7 +32,7 @@ public:
 class Game : public View
 {
 public:
-    Game();
+    Game(const std::string& filename);
     virtual ~Game();
 
     void update() override;

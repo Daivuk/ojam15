@@ -12,7 +12,7 @@
 
 Game *g_pGame;
 
-Game::Game()
+Game::Game(const std::string& filename)
 {
     g_pGame = this;
 
@@ -41,7 +41,7 @@ Game::Game()
     pChunks = new Chunk[CHUNK_COUNT * CHUNK_COUNT];
 
     // Load map
-    pTilemap = new onut::TiledMap("../../assets/maps/bg.tmx");
+    pTilemap = new onut::TiledMap(filename);
 
     auto pCollisionLayer = dynamic_cast<onut::TiledMap::sTileLayer*>(pTilemap->getLayer("collision"));
     collisions = new bool[pTilemap->getWidth() * pTilemap->getHeight()];

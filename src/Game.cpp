@@ -329,9 +329,35 @@ void Game::update()
     // Check if we reached the end
     if (pMyHero)
     {
+        if (pMyHero->life <= 0.f)
+        {
+            if (fDeadTimer == 0.f)
+            {
+                fDeadTimer = 1.5f;
+            }
+        }
         if (endTriggerRect.Contains(pMyHero->position))
         {
             // show menu n stuff
+            extern onut::UIControl *pScreen;
+            pScreen->getChild("menuVictory")->isVisible = true;
+        }
+    }
+    else
+    {
+        if (fDeadTimer == 0.f)
+        {
+            fDeadTimer = 1.5f;
+        }
+    }
+
+    if (fDeadTimer > 0.f)
+    {
+        fDeadTimer -= ODT;
+        if (fDeadTimer <= 0.f)
+        {
+            extern onut::UIControl *pScreen;
+            pScreen->getChild("menuDead")->isVisible = true;
         }
     }
 }

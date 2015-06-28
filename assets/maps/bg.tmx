@@ -280,7 +280,7 @@
   <object id="163" type="RedSoldier" gid="8" x="906" y="382" width="8" height="8"/>
   <object id="164" type="RedSoldier" gid="8" x="912" y="394" width="8" height="8"/>
   <object id="165" type="RedSoldier" gid="8" x="900" y="392" width="8" height="8"/>
-  <object id="166" type="EndTrigger" x="62" y="160" width="78" height="46"/>
+  <object id="166" type="EndTrigger" x="614" y="94" width="78" height="46"/>
  </objectgroup>
  <layer name="collision" width="128" height="128" visible="0" opacity="0.29">
   <data encoding="base64" compression="zlib">

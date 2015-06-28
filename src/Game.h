@@ -101,6 +101,7 @@ public:
     Vector2 dragDownCamPos;
     bool *collisions = nullptr;
     Rect endTriggerRect;
+    float fDeadTimer = 0.f;
 };
 
 extern Game *g_pGame;

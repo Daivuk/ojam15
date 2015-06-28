@@ -95,6 +95,7 @@
     <ClCompile Include="..\..\src\Hero.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Mortar.cpp" />
+    <ClCompile Include="..\..\src\MortarImpact.cpp" />
     <ClCompile Include="..\..\src\Puff.cpp" />
     <ClCompile Include="..\..\src\Rifleman.cpp" />
     <ClCompile Include="..\..\src\Scout.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="..\..\src\Game.h" />
     <ClInclude Include="..\..\src\Hero.h" />
     <ClInclude Include="..\..\src\Mortar.h" />
+    <ClInclude Include="..\..\src\MortarImpact.h" />
     <ClInclude Include="..\..\src\Puff.h" />
     <ClInclude Include="..\..\src\Rifleman.h" />
     <ClInclude Include="..\..\src\Scout.h" />

@@ -448,5 +448,38 @@ void Soldier::doDamage(float dmg)
 
         state = SOLDIER_STATE_DYING;
         linkChunk.Unlink();
+
+        auto pSoldier = this;
+        if (pSoldier)
+        {
+            if (pSoldier->pMortar)
+            {
+                if (pSoldier->pMortar->pCrew2)
+                {
+                    pSoldier->pMortar->pCrew2->bLocked = false;
+                }
+                pSoldier->pMortar->pCrew1 = nullptr;
+                pSoldier->pMortar->pCrew2 = nullptr;
+                pSoldier->pMortar = nullptr;
+            }
+        }
+
+        for (auto pUnit2 = g_pGame->pUnits->Head(); pUnit2; pUnit2 = g_pGame->pUnits->Next(pUnit2))
+        {
+            if (pUnit2 == this) continue;
+            pSoldier = dynamic_cast<Soldier*>(pUnit2);
+            if (pSoldier)
+            {
+                if (pSoldier->pMortar)
+                {
+                    if (pSoldier->pMortar->pCrew2 == this)
+                    {
+                        pSoldier->pMortar->pCrew1 = nullptr;
+                        pSoldier->pMortar->pCrew2 = nullptr;
+                        pSoldier->pMortar = nullptr;
+                    }
+                }
+            }
+        }
     }
 }

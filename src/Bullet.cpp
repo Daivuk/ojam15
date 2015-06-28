@@ -2,6 +2,7 @@
 #include "Unit.h"
 #include "Game.h"
 #include "Puff.h"
+#include "MortarImpact.h"
 
 #define BULLET_ALERT_RADIUS 200
 #define SHELL_SPEED (1.f / 2.f)
@@ -64,7 +65,7 @@ bool Bullet::update()
 
         if (shellProgress >= 1.f)
         {
-            g_pGame->spawn<Puff>(to);
+            g_pGame->spawn<MortarImpact>(to);
 
             g_pGame->forEachInRadius(position, 64.f, [this](Unit *pUnit, float dis)
             {
@@ -143,6 +144,7 @@ void Bullet::alertNearbyEnemies()
         if (pSoldier)
         {
             if (dynamic_cast<Hero*>(pSoldier)) return;
+            if (pSoldier->bLocked) return;
 
             if (pSoldier->pMortar)
             {

@@ -7,6 +7,7 @@
 #include "Scout.h"
 #include "Mortar.h"
 #include "Smoke.h"
+#include "MortarImpact.h"
 
 Game *g_pGame;
 
@@ -24,6 +25,7 @@ Game::Game()
     biggest = std::max<>(biggest, sizeof(Scout));
     biggest = std::max<>(biggest, sizeof(Mortar));
     biggest = std::max<>(biggest, sizeof(Smoke));
+    biggest = std::max<>(biggest, sizeof(MortarImpact));
     pUnitPool = new OPool(biggest, MAX_UNITS);
 
     // Create unit list
@@ -138,6 +140,21 @@ void Game::update()
     {
         if (pUnit->bMarkedForDeletion)
         {
+            auto pSoldier = dynamic_cast<Soldier*>(pUnit);
+            if (pSoldier)
+            {
+                if (pSoldier->pMortar)
+                {
+                    if (pSoldier->pMortar->pCrew2)
+                    {
+                        pSoldier->pMortar->pCrew2->bLocked = false;
+                    }
+                    pSoldier->pMortar->pCrew1 = nullptr;
+                    pSoldier->pMortar->pCrew2 = nullptr;
+                    pSoldier->pMortar = nullptr;
+                }
+            }
+
             // Un link others
             for (auto pUnit2 = pUnits->Head(); pUnit2; pUnit2 = pUnits->Next(pUnit2))
             {
@@ -145,6 +162,19 @@ void Game::update()
                 if (pUnit2->pFollow == pUnit)
                 {
                     pUnit2->pFollow = nullptr;
+                }
+                pSoldier = dynamic_cast<Soldier*>(pUnit2);
+                if (pSoldier)
+                {
+                    if (pSoldier->pMortar)
+                    {
+                        if (pSoldier->pMortar->pCrew2 == pUnit)
+                        {
+                            pSoldier->pMortar->pCrew1 = nullptr;
+                            pSoldier->pMortar->pCrew2 = nullptr;
+                            pSoldier->pMortar = nullptr;
+                        }
+                    }
                 }
             }
 

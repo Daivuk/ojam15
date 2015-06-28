@@ -91,7 +91,7 @@ Game::Game()
             crew[1]->bLocked = true;
             crew[0]->pMortar->pCrew1 = crew[0];
             crew[0]->pMortar->pCrew2 = crew[1];
-            crew[0]->pMortar->pCrew1->fAttackRange = 600.f;
+            crew[0]->pMortar->pCrew1->fAttackRange = 700.f;
         }
         else if (pMapObj->type == "RedMortar")
         {
@@ -103,7 +103,7 @@ Game::Game()
             crew[1]->bLocked = true;
             crew[0]->pMortar->pCrew1 = crew[0];
             crew[0]->pMortar->pCrew2 = crew[1];
-            crew[0]->pMortar->pCrew1->fAttackRange = 600.f;
+            crew[0]->pMortar->pCrew1->fAttackRange = 700.f;
         }
     }
 }

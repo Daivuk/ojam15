@@ -99,7 +99,7 @@ void Hero::update()
         });
     }
 
-    dir += lastMoveDir * ODT * 5.f;
+    dir += lastMoveDir * ODT * 10.f;
     dir.Normalize();
     Vector2 right{-dir.y, dir.x};
 
@@ -138,10 +138,10 @@ void Hero::update()
 
     static const Vector2 mortarFollowPos[] =
     {
-        {-SEPARATION * 1.0f, -SEPARATION * .7f - OFFSET_FROM_HERO},
-        {SEPARATION * 1.0f, -SEPARATION * .7f - OFFSET_FROM_HERO},
-        {-SEPARATION * 3.0f, -SEPARATION * .4f - OFFSET_FROM_HERO},
-        {SEPARATION * 3.0f, -SEPARATION * .4f - OFFSET_FROM_HERO},
+        {-SEPARATION * 1.0f,  - OFFSET_FROM_HERO},
+        {SEPARATION * 1.0f, - OFFSET_FROM_HERO},
+        {-SEPARATION * 3.0f, - OFFSET_FROM_HERO},
+        {SEPARATION * 3.0f, - OFFSET_FROM_HERO},
     };
     static const auto followMortarPosCount = sizeof(mortarFollowPos) / sizeof(Vector2);
 

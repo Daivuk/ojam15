@@ -20,5 +20,5 @@ void Rifleman::render()
 void Rifleman::onShoot(const Vector2& attackPos)
 {
     g_pGame->spawnBullet(position, attackPos, fPrecision, team, .75f, false);
-    g_pGame->playSound(OGetSound("rifle.wav"), position, .75f);
+    g_pGame->playSound(OGetSound("rifle.wav"), position, .5f);
 }

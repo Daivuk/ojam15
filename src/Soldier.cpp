@@ -160,7 +160,12 @@ void Soldier::updateMovement()
 {
     if (fShootTime <= 0.f || fWalkAnim >= SHOOT_AND_WALK_TIMEOUT)
     {
+        auto oldPos = position;
         position += moveDir * velocity * ODT;
+        if (g_pGame->collisionAt(position))
+        {
+            position = oldPos; // Pretty rough
+        }
 
         if (velocity > 0.f)
         {

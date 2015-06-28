@@ -465,4 +465,12 @@ void Game::playSound(OSound *pSound, const Vector2 &position, float volume)
 
 bool Game::collisionAt(const Vector2& pos) const
 {
+    int x = (int)(pos.x / (UNIT_SCALE * 8.f));
+    int y = (int)(pos.y / (UNIT_SCALE * 8.f));
+    if (x < 0) return true;
+    if (y < 0) return true;
+    if (x >= pTilemap->getWidth()) return true;
+    if (y >= pTilemap->getHeight()) return true;
+
+    return collisions[x + y * pTilemap->getWidth()];
 }

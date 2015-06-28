@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="8" tileheight="8" nextobjectid="62">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="128" height="128" tilewidth="8" tileheight="8" nextobjectid="72">
  <tileset firstgid="1" name="tiles" tilewidth="8" tileheight="8">
   <image source="../textures/tiles.png" width="64" height="64"/>
   <terraintypes>
@@ -59,7 +59,7 @@
  </layer>
  <layer name="Deco" width="128" height="128">
   <data encoding="base64" compression="zlib">
-   eJzt3VFqwzAQBFDfprn/CUugBhPaRpLzo5n3IOQAk12tbVk5jnsePx86fV0+dHpmrwegB3STf69n/5d/L9cB3cyA3fT/brLvZe3vpva7qf1u6n9fn5jb5b+3x3FvhtP/M6zmqP4zrK4F6j/HuZdjJlP1n+fsBSPZqv9cI3Oh/DONXhfIP8vsnk757+2c967fM+S/r0/s3ZZ/N9d/3dR/N/l3k383+7+6ef+zm9rvpfd30/d7eeenm7kP+XeTfzezfzf1303+3eTfTf57uzu/mf/2dvf+vfz3d+c+nv6fYfX8NvnnWHmeI/8ss+/9Wv+zzPQAtZ9ptKbVfqaRXO39yDWaP5lGslX7uZz50k39d7P+dxt5HiD/bO+eC8o/3389wN7/fO9qXP65Rup75axY9jBT2+4FZ1lZ269nB/ot7Esv76Z2e1nHu8m+m/y7mf26yb+b/o9rAH579vv6HyHOfcx3zfsv19+DvgEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQLpv2ToajQ==
+   eJzt3VtqwzAQBVDvptn/CouhBhPSRC870sw5EPqXGl/NWI782LY+j78POf2cPuS0Z68HoAfkJv+89v4v/7ycB+RmDpib/p+b7PNy7M9N7eem9nNT/+saMW+X/9oeW98cTv+PoTVH9R9D67FA/cdxXMtRk6n6j+foBSXZqv+4SuaF8o+p9LxA/rHUXtMp/7Ud873z3xryX9eIa7fln5vzv9zUf27yz03+ubn+Kzf3f+am9vPS+3PT9/Nyz09u5n3IPzf552bun5v6z03+uck/N/mvrXf+Zv63tt7f7+W/vp7f8fT/GFqf3yb/OFrWc+QfS+19v47/sdT0ALUfU2lNq/2YSnJ17UdcpfkTU0m2aj8uz3zJTf3n9q3j//n5Ey3PIWOMkvWA0bn8tw51fgaRnnOfT+uCI/MvrXP3Gt3rXb2Nuva/tsfrA/f5lMuo/GvpAdcrqe8RczRrznOq2ce1a0bncdOy3qz+r9VybH8+d3s8fVq/99X/4TpX1Fbv+yVGfQefzVpfs25XJDOfW826XZHMvI9n3rYoZt7HM/emKFaYW62wjataYd86B7jOKv3V+vB1VjvOGgPjveqxz+8Ima0PGwfjnfP+z3k8HH2j510yvXrWFhjvm9fvGANz+UaPNgbm8q4X1L53roZnlc7l3Trxtl1Tt8bAWq44xzAG1uL4jZpl1t+duJ8xgHkBjgfsjAF2JetVxGcMYAwgfwAAAAAAAAAAAAAAAAAAAAAAAGbzC6uILdw=
   </data>
  </layer>
  <objectgroup name="units">
@@ -86,8 +86,22 @@
   <object id="59" type="BlueSoldier" gid="7" x="86" y="36" width="8" height="8"/>
   <object id="60" type="BlueSoldier" gid="7" x="74" y="32" width="8" height="8"/>
   <object id="61" type="BlueScout" gid="23" x="32" y="300" width="8" height="8"/>
+  <object id="62" type="BlueMortar" gid="16" x="304" y="482" width="8" height="8">
+   <properties>
+    <property name="direction" value="0"/>
+   </properties>
+  </object>
+  <object id="63" type="RedSoldier" gid="8" x="436" y="660" width="8" height="8"/>
+  <object id="64" type="RedSoldier" gid="8" x="438" y="634" width="8" height="8"/>
+  <object id="65" type="RedSoldier" gid="8" x="442" y="644" width="8" height="8"/>
+  <object id="66" type="RedSoldier" gid="8" x="414" y="662" width="8" height="8"/>
+  <object id="67" type="RedSoldier" gid="8" x="420" y="654" width="8" height="8"/>
+  <object id="68" type="RedSoldier" gid="8" x="424" y="664" width="8" height="8"/>
+  <object id="69" type="RedSoldier" gid="8" x="426" y="646" width="8" height="8"/>
+  <object id="70" type="RedSoldier" gid="8" x="430" y="640" width="8" height="8"/>
+  <object id="71" type="RedSoldier" gid="8" x="434" y="650" width="8" height="8"/>
  </objectgroup>
- <layer name="collision" width="128" height="128" visible="0" opacity="0.29">
+ <layer name="collision" width="128" height="128" opacity="0.29">
   <data encoding="base64" compression="zlib">
    eJzt3EGq20AQBNA+St3/lNlkEUhiS5b4pfG8B1pNDxRUL4yxPHNNfj/sKWMHdpfRP3Zgd2kHoCaj/51l9L+zjP53ltH/ztIOQE1G/ztLOwBVaQegKu0AfCxzvb+r9+nKXNuDT+/xLPnhezxL5rMuP7nDM2XO78GZWdaQOb4HR2ZYU+Z9v+/OWVNG/zvKnPsMcHSOZ8o/nrP3WVPG939ck3YAqtIOQFXaAahKOwBVGTuws4z+d5Z2AGoy+t9Z2gGoyeh/Zxn97y7tAFSlHYCqtANQlXYAqtIOQFXaAahKOwCXpHyfrsy1Dq/c5Rky3v3cXca7n7vL+O3/7nJy9sw8z5fx3tfucvMca8nBmSNzrCc3zbCm3DTDmnLTDGvKTTOsKTfNsKaM//zZXeZ1x6/O+A55c/bqnPXl4jnryhzr/8gc68nJ2TPzPFvms98B/PmwprQDUJV2AGoy+t9Z2gGoSjsAVWkHoCrtAFSlHYC6jD3YXebvHch/Hr5X5n3POTgHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADf4BcciRWB
   </data>

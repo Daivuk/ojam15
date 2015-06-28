@@ -340,6 +340,7 @@ void Game::update()
         {
             // show menu n stuff
             extern onut::UIControl *pScreen;
+            OGetSound("victory.wav")->play();
             pScreen->getChild("menuVictory")->isVisible = true;
         }
     }
@@ -357,6 +358,7 @@ void Game::update()
         if (fDeadTimer <= 0.f)
         {
             extern onut::UIControl *pScreen;
+            OGetSound("dead.wav")->play();
             pScreen->getChild("menuDead")->isVisible = true;
         }
     }

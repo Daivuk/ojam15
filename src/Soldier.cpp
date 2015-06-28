@@ -479,7 +479,6 @@ void Soldier::doDamage(float dmg)
             {
                 if (pSoldier->pMortar)
                 {
-                    pSoldier->fAttackRange = 350.f;
                     if (pSoldier->pMortar->pCrew2 == this)
                     {
                         pSoldier->fAttackRange = 350.f;

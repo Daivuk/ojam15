@@ -51,7 +51,7 @@ void Hero::update()
 
     // Order other units to follow
     //if (OGamePad(0)->isJustPressed(onut::GamePad::eGamePad::A))
-    if (OInput->isStateDown(DIK_MOUSEB1))
+    if (OInput->isStateJustDown(DIK_MOUSEB1) || OInput->isStateJustDown(DIK_E))
     {
         g_pGame->forEachInRadius(this, FOLLOW_TOGGLE_RANGE, [this](Unit* pUnit, float dis)
         {
@@ -75,7 +75,7 @@ void Hero::update()
         });
     }
     //if (OGamePad(0)->isJustPressed(onut::GamePad::eGamePad::B))
-    if (OInput->isStateDown(DIK_MOUSEB2))
+    if (OInput->isStateJustDown(DIK_MOUSEB2) || OInput->isStateJustDown(DIK_Q))
     {
         g_pGame->forEachInRadius(this, FOLLOW_TOGGLE_RANGE, [this](Unit* pUnit, float dis)
         {

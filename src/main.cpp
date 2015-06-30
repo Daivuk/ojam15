@@ -20,7 +20,7 @@ int CALLBACK WinMain(
     _In_  int nCmdShow
     )
 {
-    OSettings->setResolution({1280, 920});
+    OSettings->setResolution({1280, 720});
     OSettings->setGameName("Ottawa Game Jam 2015 - It's not safe to go alone");
     OSettings->setIsResizableWindow(true);
     OSettings->setBorderlessFullscreen(true);

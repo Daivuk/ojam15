@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Puff.h"
 #include "MortarImpact.h"
+#include "Soldier.h"
 
 #define BULLET_ALERT_RADIUS 200
 #define SHELL_SPEED (1.f / 2.f)
@@ -143,7 +144,6 @@ void Bullet::alertNearbyEnemies()
         auto pSoldier = dynamic_cast<Soldier*>(pUnit);
         if (pSoldier)
         {
-            if (dynamic_cast<Hero*>(pSoldier)) return;
             if (pSoldier->bLocked) return;
 
             if (!pSoldier->pMortar)

@@ -94,7 +94,6 @@
     <ClCompile Include="..\..\src\Blood.cpp" />
     <ClCompile Include="..\..\src\Bullet.cpp" />
     <ClCompile Include="..\..\src\Game.cpp" />
-    <ClCompile Include="..\..\src\Hero.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Mortar.cpp" />
     <ClCompile Include="..\..\src\MortarImpact.cpp" />
@@ -111,7 +110,6 @@
     <ClInclude Include="..\..\src\Blood.h" />
     <ClInclude Include="..\..\src\Bullet.h" />
     <ClInclude Include="..\..\src\Game.h" />
-    <ClInclude Include="..\..\src\Hero.h" />
     <ClInclude Include="..\..\src\Mortar.h" />
     <ClInclude Include="..\..\src\MortarImpact.h" />
     <ClInclude Include="..\..\src\Puff.h" />

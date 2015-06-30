@@ -23,7 +23,9 @@ int CALLBACK WinMain(
     OSettings->setResolution({1280, 720});
     OSettings->setGameName("Ottawa Game Jam 2015 - It's not safe to go alone");
     OSettings->setIsResizableWindow(true);
+#ifndef _DEBUG
     OSettings->setBorderlessFullscreen(true);
+#endif
 
     onut::run(init, update, render);
 }
@@ -226,7 +228,7 @@ void init()
         OPlaySound("buttonClick.wav");
         PostQuitMessage(0);
     };
-    pScreen->getChild<onut::UIButton>("btnMission")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
+    pScreen->getChild<onut::UIButton>("btnCampaign")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
     {
         OPlaySound("buttonClick.wav");
         pScreen->getChild("menuMain")->isVisible = false;
@@ -240,7 +242,7 @@ void init()
         sCurrentMap = "../../assets/maps/sandbox.tmx";
         pGame = new Game(sCurrentMap);
     };
-    pScreen->getChild<onut::UIButton>("btnHowToPlay")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
+    pScreen->getChild<onut::UIButton>("btnOptions")->onClick = [](onut::UIControl*, const onut::UIMouseEvent&)
     {
         OPlaySound("buttonClick.wav");
         pScreen->getChild("menuHelp")->isVisible = true;

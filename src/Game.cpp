@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "Soldier.h"
-#include "Hero.h"
 #include "Rifleman.h"
 #include "Puff.h"
 #include "Blood.h"
@@ -19,7 +18,6 @@ Game::Game(const std::string& filename)
     // Create unit pool
     auto biggest = sizeof(Unit);
     biggest = std::max<>(biggest, sizeof(Soldier));
-    biggest = std::max<>(biggest, sizeof(Hero));
     biggest = std::max<>(biggest, sizeof(Rifleman));
     biggest = std::max<>(biggest, sizeof(Puff));
     biggest = std::max<>(biggest, sizeof(Blood));
@@ -56,12 +54,7 @@ Game::Game(const std::string& filename)
     {
         auto pMapObj = pObjLayer->pObjects + i;
         auto pos = (pMapObj->position + pMapObj->size * .5f) * UNIT_SCALE;
-        if (pMapObj->type == "Hero")
-        {
-            pMyHero = spawn<Hero>(pos, TEAM_BLUE);
-            camera = pos;
-        }
-        else if (pMapObj->type == "Sandbag")
+        if (pMapObj->type == "Sandbag")
         {
             spawn<SandBag>(pos, TEAM_NEUTRAL);
         }
@@ -183,10 +176,11 @@ void Game::update()
     {
         if (OInput->isStateDown(DIK_SPACE))
         {
-            if (pMyHero)
+            // Focus on selection
+      /*      if (pMyHero)
             {
                 camera = pMyHero->position;
-            }
+            }*/
         }
         else
         {
@@ -323,32 +317,6 @@ void Game::update()
                 it->linkMain.InsertBefore(it, &prev->linkMain);
             }
             prev = it;
-        }
-    }
-
-    // Check if we reached the end
-    if (pMyHero)
-    {
-        if (pMyHero->life <= 0.f)
-        {
-            if (fDeadTimer == 0.f)
-            {
-                fDeadTimer = 1.5f;
-            }
-        }
-        if (endTriggerRect.Contains(pMyHero->position))
-        {
-            // show menu n stuff
-            extern onut::UIControl *pScreen;
-            OGetSound("victory.wav")->play();
-            pScreen->getChild("menuVictory")->isVisible = true;
-        }
-    }
-    else
-    {
-        if (fDeadTimer == 0.f)
-        {
-            fDeadTimer = 1.5f;
         }
     }
 

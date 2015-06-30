@@ -1,8 +1,8 @@
 #pragma once
 #include "onut.h"
 #include "View.h"
-#include "Hero.h"
 #include "Bullet.h"
+#include "Unit.h"
 
 #define DRAW_SCALE .5f
 
@@ -95,7 +95,6 @@ public:
     TList<Bullet> *pBullets = nullptr;
     Vector2 camera;
     OTexture *pBulletTexture = nullptr;
-    Hero *pMyHero = nullptr;
     onut::TiledMap *pTilemap = nullptr;
     Vector2 dragDownPos;
     Vector2 dragDownCamPos;

@@ -49,12 +49,7 @@ void Soldier::updateAttack()
             if (pUnit->team == team) return;
             if (pUnit->team == TEAM_NEUTRAL) return;
 
-            auto pHero = dynamic_cast<Hero*>(pTargetFound);
-            if (pTargetFound && !pHero)
-            {
-                if (dynamic_cast<Hero*>(pUnit)) return;
-            }
-            if (dis < closestDis || pHero)
+            if (dis < closestDis)
             {
                 pTargetFound = pUnit;
                 closestDis = dis;
